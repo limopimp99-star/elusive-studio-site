@@ -28,6 +28,7 @@ class ElusiveContact extends HTMLElement {
                 button:hover { background: white; color: #ef4444; transform: translateY(-2px); }
             </style>
             <div class="container">
+                    <img src="war-room-logo.png" alt="War Room Logo" style="width: 80px; margin-bottom: 1rem;">
                 <h2>Secure the Empire</h2>
                 <p>Serious creators only. Tell us your vision, and we'll build the infrastructure.</p>
                 <form name="contact" method="POST" data-netlify="true">
