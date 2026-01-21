@@ -14,6 +14,9 @@ class ElusiveFooter extends HTMLElement {
             </style>
             <footer>
                 <div class="social-icons">
+                    <a href="https://linktr.ee/MrLive305" target="_blank">
+                        <img src="https://cdn-icons-png.flaticon.com/512/10008/10008434.png" alt="Linktree">
+                    </a>
                     <a href="https://www.youtube.com/@MrLive305" target="_blank">
                         <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube">
                     </a>
@@ -24,7 +27,7 @@ class ElusiveFooter extends HTMLElement {
                         <img src="https://cdn-icons-png.flaticon.com/512/1384/1384067.png" alt="Snapchat">
                     </a>
                 </div>
-                <p>© 2024 Elusive Studio Management. Help Me Help You.</p>
+                <p>© 2026 Elusive Studio Management. Help Me Help You.</p>
             </footer>
         `;
     }
