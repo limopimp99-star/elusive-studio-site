@@ -4,43 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Elusive Studio | The Jerry Maguire of AI Content</title>
-    
     <meta name="description" content="We don't just manage; we build empires. AI cloning, LLC setup, and 24/7 production for elite creators.">
-    
     <link rel="stylesheet" href="style.css">
     
     <script src="header.js" defer></script>
     <script src="hero.js" defer></script>
     <script src="services.js" defer></script>
-    <script src="pricing.js" defer></script>
+    <script src="contact-section.js" defer></script> <script src="pricing.js" defer></script>
     <script src="testimonials.js" defer></script>
     <script src="faq.js" defer></script>
     <script src="footer.js" defer></script>
 </head>
 <body>
     <div class="fixed-bg"></div>
-    
     <elusive-header></elusive-header>
     
     <main>
-        <section id="home">
-            <elusive-hero></elusive-hero>
-        </section>
-
-        <section id="services">
-            <elusive-services></elusive-services>
-        </section>
+        <section id="home"><elusive-hero></elusive-hero></section>
+        <section id="services"><elusive-services></elusive-services></section>
         
-        <section id="pricing">
-            <elusive-pricing></elusive-pricing>
-        </section>
+        <section id="contact"><elusive-contact></elusive-contact></section>
 
+        <section id="pricing"><elusive-pricing></elusive-pricing></section>
         <elusive-testimonials></elusive-testimonials>
-        
-        <section id="faq">
-            <elusive-faq></elusive-faq>
-        </section>
+        <section id="faq"><elusive-faq></elusive-faq></section>
     </main>
+
+    <form name="contact" netlify netlify-honeypot="bot-field" hidden>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <textarea name="message"></textarea>
+    </form>
 
     <elusive-footer></elusive-footer>
 </body>
