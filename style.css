@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+
+:root {
+    --crimson: #ef4444;
+    --dark-bg: #050505;
+}
+
+body {
+    margin: 0; padding: 0;
+    background-color: var(--dark-bg);
+    color: white;
+    font-family: 'Inter', sans-serif;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+/* Vivid Fixed Background Visual */
+.fixed-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    /* High quality studio/production image */
+    background-image: url('https://images.unsplash.com/photo-1598550476439-c44775573692?q=80&w=3870&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.25; /* Subtle fade so text pops */
+    filter: contrast(120%) saturate(110%); /* Make it vivid */
+}
+
+main {
+    /* This ensures content slides over the fixed background */
+    position: relative;
+    z-index: 1;
+    background: rgba(5, 5, 5, 0.85); /* Semi-transparent black overlay */
+    backdrop-filter: blur(5px);
+}
+
+/* Rainbow Animation for Hero Text */
+@keyframes rainbow-move {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Floating Animation for Plus Signs */
+@keyframes float-plus {
+    0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
+    50% { transform: translateY(-30px) rotate(45deg); opacity: 0.6; }
+}
