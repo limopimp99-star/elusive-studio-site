@@ -17,12 +17,18 @@
     <script src="footer.js" defer></script>
 
     <script>
-      fetch('https://api.ipify.org?format=json')
-        .then(response => response.json())
-        .then(data => {
-          const ipField = document.querySelector('input[name="user_ip"]');
-          if(ipField) ipField.value = data.ip;
-        });
+      document.addEventListener('DOMContentLoaded', () => {
+        fetch('https://api.ipify.org?format=json')
+          .then(response => response.json())
+          .then(data => {
+            const ipField = document.querySelector('input[name="user_ip"]');
+            if(ipField) {
+              ipField.value = data.ip;
+              console.log("Empire tracking active. IP captured:", data.ip);
+            }
+          })
+          .catch(err => console.error("IP capture failed:", err));
+      });
     </script>
 </head>
 <body>
