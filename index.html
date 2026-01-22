@@ -10,10 +10,20 @@
     <script src="header.js" defer></script>
     <script src="hero.js" defer></script>
     <script src="services.js" defer></script>
-    <script src="contact-section.js" defer></script> <script src="pricing.js" defer></script>
+    <script src="contact-section.js" defer></script> 
+    <script src="pricing.js" defer></script>
     <script src="testimonials.js" defer></script>
     <script src="faq.js" defer></script>
     <script src="footer.js" defer></script>
+
+    <script>
+      fetch('https://api.ipify.org?format=json')
+        .then(response => response.json())
+        .then(data => {
+          const ipField = document.querySelector('input[name="user_ip"]');
+          if(ipField) ipField.value = data.ip;
+        });
+    </script>
 </head>
 <body>
     <div class="fixed-bg"></div>
@@ -22,9 +32,7 @@
     <main>
         <section id="home"><elusive-hero></elusive-hero></section>
         <section id="services"><elusive-services></elusive-services></section>
-        
         <section id="contact"><elusive-contact></elusive-contact></section>
-
         <section id="pricing"><elusive-pricing></elusive-pricing></section>
         <elusive-testimonials></elusive-testimonials>
         <section id="faq"><elusive-faq></elusive-faq></section>
@@ -34,6 +42,7 @@
       <input type="text" name="name" />
       <input type="email" name="email" />
       <textarea name="message"></textarea>
+      <input type="hidden" name="user_ip" />
     </form>
 
     <elusive-footer></elusive-footer>
