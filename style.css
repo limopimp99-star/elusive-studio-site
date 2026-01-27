@@ -1,92 +1,132 @@
+/* --- 1. CORE THEME & LAYOUT --- */
 :root {
     --neon-red: #ef4444;
-    --glass: rgba(10, 10, 10, 0.8);
     --bg-dark: #050505;
+    --glass: rgba(15, 15, 15, 0.85);
 }
 
 * { box-sizing: border-box; }
 
-html, body {
-    margin: 0; 
-    padding: 0;
-    background: var(--bg-dark);
+body, html {
+    margin: 0; padding: 0;
+    background-color: var(--bg-dark);
     color: white;
     font-family: 'Inter', sans-serif;
     overflow-x: hidden;
-    overflow-y: auto !important; /* Forces scrolling to work */
-    min-height: 100vh;
+    scroll-behavior: smooth;
 }
 
-/* 1. BACKGROUND LAYER */
-#canvas-container { 
-    position: fixed; 
-    inset: 0; 
-    z-index: -3; 
-    background: #000; 
+/* --- 2. BACKGROUND & ATMOSPHERE --- */
+#canvas-container { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+
+#cursor-glow {
+    position: fixed; width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(239, 68, 68, 0.08) 0%, transparent 70%);
+    border-radius: 50%; pointer-events: none; z-index: 0;
+    transform: translate(-50%, -50%); transition: transform 0.1s ease-out;
 }
 
-/* 2. NAVIGATION */
-.glass-nav {
-    position: fixed; 
-    top: 20px; 
-    left: 50%; 
-    transform: translateX(-50%);
-    width: 90%; 
-    max-width: 1200px; 
-    padding: 1rem 2rem;
-    background: var(--glass); 
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.05); 
-    border-radius: 50px;
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center;
-    z-index: 1000;
+.red-pulse {
+    position: fixed; top: 50%; left: 50%; width: 80vw; height: 80vw;
+    background: radial-gradient(circle, rgba(239, 68, 68, 0.25) 0%, transparent 70%);
+    transform: translate(-50%, -50%); filter: blur(80px); z-index: -2; pointer-events: none;
+    animation: pulseGlow 4s infinite alternate ease-in-out;
 }
 
-.nav-logo { font-weight: 900; letter-spacing: 2px; color: #fff; }
-.nav-logo span { color: var(--neon-red); }
-
-.nav-links a { 
-    color: #888; 
-    text-decoration: none; 
-    margin-left: 20px; 
-    transition: 0.3s; 
-    font-weight: 600; 
-    font-size: 0.8rem; 
-}
-.nav-links a:hover { color: var(--neon-red); }
-
-/* 3. HERO SECTION (The fix for the Image & Glow) */
-.high-res-hero { 
-    height: 100vh; 
-    width: 100%;
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    position: relative; 
-    overflow: hidden;
-    background: #000;
+@keyframes pulseGlow { 
+    from { opacity: 0.3; transform: translate(-50%, -50%) scale(0.8); } 
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1.2); } 
 }
 
-.hero-bg-img {
-    position: absolute; 
-    top: 0; 
+/* --- 3. SCROLL REVEAL (INTENSE BLUR) --- */
+.scroll-fade-section {
+    opacity: 0;
+    filter: blur(20px); /* BCON Intense Blur */
+    transform: translateY(40px) scale(0.95);
+    transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, filter, transform;
+}
+
+.scroll-fade-section.visible {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0) scale(1);
+}
+
+/* --- 4. FLOATING PARTICLES --- */
+.floating-particle {
+    position: absolute; color: rgba(239, 68, 68, 0.3);
+    font-family: serif; pointer-events: none; z-index: 1;
+    animation: float-around 20s infinite linear;
+}
+
+@keyframes float-around {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(50px, 100px) rotate(180deg); }
+    100% { transform: translate(0, 0) rotate(360deg); }
+}
+
+/* --- 5. SERVICE CARDS --- */
+.service-card {
+    background: var(--glass);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    padding: 2rem; border-radius: 15px; transition: 0.4s;
+}
+.service-card:hover {
+    border-color: var(--neon-red);
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+    transform: translateY(-10px);
+}
+/* War Room Dashboard Styles */
+#war-room-dashboard {
+    position: fixed;
+    top: 0;
     left: 0;
-    width: 100%; 
-    height: 100%;
-    object-fit: cover; 
-    z-index: 1; /* Moves it in front of the black background layer */
-    opacity: 0.7; /* Adjusted so text is easier to read */
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    background: rgba(0,0,0,0.95);
+    overflow-y: auto;
+    animation: glitchIn 0.3s ease-out;
 }
 
-.hero-content { 
-    text-align: center; 
-    z-index: 10; /* Keeps text in front of the image */
-    padding: 0 20px; 
+.db-card {
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid #ef4444;
+    padding: 30px;
+    border-radius: 5px;
+    box-shadow: inset 0 0 15px rgba(239, 68, 68, 0.1);
 }
 
-.gaussian-text { 
-    font-size: clamp(2.5rem, 8vw, 6rem);
-    font-weight: 900; 
-    color: #ffffff;
+.db-card h3 {
+    margin-top: 0;
+    letter-spacing: 2px;
+    color: #ef4444;
+}
+
+@keyframes glitchIn {
+    0% { opacity: 0; filter: brightness(2) blur(10px); }
+    100% { opacity: 1; filter: brightness(1) blur(0px); }
+}
+.op-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #222;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.op-card:hover {
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.05);
+    transform: translateY(-2px);
+}
+.op-card h3 {
+    color: #ef4444;
+    margin: 0 0 5px 0;
+    font-size: 0.9rem;
+}
+.op-card p {
+    color: #666;
+    margin: 0;
+    font-size: 0.75rem;
+}
