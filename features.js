@@ -54,3 +54,38 @@ class ElusiveFeatures extends HTMLElement {
     }
 }
 customElements.define('elusive-features', ElusiveFeatures);
+const canvas = document.getElementById('liquid-bg');
+const ctx = canvas.getContext('2d');
+let w, h, particles = [];
+
+function init() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+    particles = [];
+    for(let i=0; i<30; i++) particles.push({
+        x: Math.random() * w, y: Math.random() * h,
+        vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5,
+        r: Math.random() * 2 + 1
+    });
+}
+
+function draw() {
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle = 'rgba(239, 68, 68, 0.3)';
+    particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if(p.x < 0 || p.x > w) p.vx *= -1;
+        if(p.y < 0 || p.y > h) p.vy *= -1;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+    });
+    requestAnimationFrame(draw);
+}
+
+window.addEventListener('resize', init);
+window.addEventListener('scroll', () => {
+    const nav = document.querySelector('.glass-nav');
+    if(window.scrollY > 50) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+});
+
+init(); draw();
