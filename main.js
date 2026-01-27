@@ -5,12 +5,13 @@ let hasGreeted = false;
 
 // --- CORE INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
+    // Allows interaction to trigger audio (browser security requirement)
     document.body.addEventListener('click', () => {
         if (!hasGreeted && !isVerified) {
             initializeEmpireGreeting();
             hasGreeted = true;
         }
-    }, { once: false });
+    }, { once: true });
 
     const fadeObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -20,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { threshold: 0.1 });
 
     document.querySelectorAll('.scroll-fade-section').forEach(s => fadeObserver.observe(s));
-    if (typeof initLiquidBg === "function") initLiquidBg();
 });
 
 // --- GLITCH EFFECT ---
@@ -35,32 +35,37 @@ function triggerGlitch() {
 function initializeEmpireGreeting() {
     const bouncer = document.getElementById('ai-bouncer');
     if (bouncer) bouncer.classList.remove('closed'); 
-    const welcomeMsg = "Systems online. restricted airspace. Provide credentials.";
+    const welcomeMsg = "Systems online. Restricted airspace. Provide credentials.";
     speak(welcomeMsg);
     appendMessage("AGENT ADAM", "<strong>SYSTEM INITIALIZED:</strong> " + welcomeMsg);
 }
 
 // --- VOICE ENGINE (ELEVENLABS + FALLBACK) ---
 async function speak(audioData) {
-    // If it's a string, use browser fallback
+    // FALLBACK: If audioData is just a string (text), use browser synthesis
     if (typeof audioData === 'string') {
         if (!window.speechSynthesis) return;
         window.speechSynthesis.cancel();
         const msg = new SpeechSynthesisUtterance(audioData);
-        msg.rate = 0.85;
-        msg.pitch = 0.7;
+        msg.rate = 0.9;
+        msg.pitch = 0.8;
         window.speechSynthesis.speak(msg);
         return;
     }
 
-    // ElevenLabs Audio Binary
+    // ELEVENLABS: If audioData is an ArrayBuffer (binary)
     const audioBlob = new Blob([audioData], { type: 'audio/mpeg' });
     const audioUrl = URL.createObjectURL(audioBlob);
     const audio = new Audio(audioUrl);
     
     const avatar = document.getElementById('adam-visual');
-    audio.onplay = () => { if (avatar) avatar.style.filter = "grayscale(0) brightness(1.2) drop-shadow(0 0 10px #ef4444)"; };
-    audio.onended = () => { if (avatar) avatar.style.filter = "grayscale(1) sepia(1) hue-rotate(-50deg)"; };
+    audio.onplay = () => { 
+        if (avatar) avatar.style.filter = "grayscale(0) brightness(1.2) drop-shadow(0 0 10px #ef4444)"; 
+    };
+    audio.onended = () => { 
+        if (avatar) avatar.style.filter = "grayscale(1) sepia(1) hue-rotate(-50deg)"; 
+        URL.revokeObjectURL(audioUrl); // Clean up memory
+    };
     audio.play();
 }
 
@@ -84,22 +89,26 @@ async function sendToWebhook(text, agentName, outputFn) {
         });
 
         const contentType = response.headers.get("content-type");
+
+        // 1. Handle Audio Response (Binary Stream)
         if (contentType && contentType.includes("audio")) {
             const audioBuffer = await response.arrayBuffer();
             speak(audioBuffer);
-            outputFn(agentName, "Uplink stable. Processing directive...");
-        } else {
+            outputFn(agentName, "Directive received. Processing...");
+        } 
+        // 2. Handle Text Response (JSON)
+        else {
             const data = await response.json();
             const reply = data.output || data.text || "Uplink stable.";
             outputFn(agentName, reply);
-            speak(reply);
+            speak(reply); // Uses browser voice fallback
         }
     } catch (err) {
-        outputFn("SYSTEM", "Link unstable.");
+        outputFn("SYSTEM", "Link unstable. Check n8n execution.");
     }
 }
 
-// --- CHAT HANDLERS ---
+// --- CHAT INTERFACE HANDLERS ---
 window.sendMessage = async function() {
     const input = document.getElementById('user-input');
     if (!input || !input.value.trim()) return;
@@ -109,13 +118,15 @@ window.sendMessage = async function() {
 
     if (text.toUpperCase() === "OMEGA") { enterWarRoom(); return; }
     if (!isVerified) { speak("Identity unverified."); return; }
+    
     sendToWebhook(text, "AGENT ADAM", appendMessage);
 };
 
 window.sendWarMessage = async function() {
     const input = document.getElementById('war-input');
+    if (!input || !input.value.trim()) return;
     const text = input.value.trim();
-    if (!text) return;
+    
     triggerGlitch();
 
     const chatContainer = document.getElementById('war-room-chat');
@@ -128,12 +139,14 @@ window.sendWarMessage = async function() {
     });
 };
 
-// --- THE WAR ROOM (MOBILE FIXED) ---
+// --- THE WAR ROOM UI ---
 function enterWarRoom() {
     isVerified = true;
     speak("Access Granted. Neural link established.");
     
-    document.querySelector('main').style.display = 'none';
+    const main = document.querySelector('main');
+    if (main) main.style.display = 'none';
+    
     document.body.style.backgroundColor = "#050505";
     document.body.style.overflow = "hidden";
     
@@ -147,7 +160,7 @@ function enterWarRoom() {
             .side-panel { width: 350px; border-right: 1px solid #ef4444; display: flex; flex-direction: column; background: rgba(10,10,10,0.9); }
             .center-panel { flex: 1; padding: 40px; overflow-y: auto; border-right: 1px solid #222; }
             .log-panel { width: 250px; background: #000; padding: 15px; font-size: 0.65rem; color: #0f0; overflow: hidden; }
-            .op-card { border: 1px solid #222; padding: 20px; cursor: pointer; transition: 0.3s; background: #0a0a0a; }
+            .op-card { border: 1px solid #222; padding: 20px; cursor: pointer; transition: 0.3s; background: #0a0a0a; margin-bottom:10px; }
             .op-card:hover { border-color: #ef4444; background: rgba(239, 68, 68, 0.05); }
             @media (max-width: 768px) {
                 .war-container { flex-direction: column; overflow-y: auto; }
@@ -159,12 +172,14 @@ function enterWarRoom() {
         <div class="war-container">
             <div class="side-panel">
                 <div style="padding: 20px; text-align: center; border-bottom: 1px solid #333;">
-                    <img id="adam-visual" src="war-room-logo.png" style="width:100px; height:100px; border:1px solid #ef4444; filter:grayscale(1) sepia(1);">
+                    <img id="adam-visual" src="war-room-logo.png" style="width:100px; height:100px; border:1px solid #ef4444; filter:grayscale(1) sepia(1); transition: 0.3s;">
                     <h2 style="color: #ef4444; font-size: 0.8rem; margin-top: 10px;">AGENT ADAM V.2.0</h2>
                 </div>
-                <div id="war-room-chat" style="flex: 1; overflow-y: auto; padding: 20px; font-size: 0.8rem;"></div>
+                <div id="war-room-chat" style="flex: 1; overflow-y: auto; padding: 20px; font-size: 0.8rem; color:#ccc;"></div>
                 <div style="padding: 20px; border-top: 1px solid #333;">
-                    <input type="text" id="war-input" placeholder="DIRECTIVE..." style="width:100%; background:transparent; border:1px solid #ef4444; color:white; padding:10px;" onkeypress="if(event.key === 'Enter') window.sendWarMessage()">
+                    <input type="text" id="war-input" placeholder="DIRECTIVE..." 
+                        style="width:100%; background:transparent; border:1px solid #ef4444; color:white; padding:10px;" 
+                        onkeypress="if(event.key === 'Enter') window.sendWarMessage()">
                 </div>
             </div>
             <div class="center-panel">
@@ -187,22 +202,33 @@ function enterWarRoom() {
     `;
     document.body.appendChild(dashboard);
 
-    // Sync old chat
+    // Sync messages from bouncer to War Room
     const oldChat = document.getElementById('chat-messages');
-    if (oldChat) document.getElementById('war-room-chat').innerHTML = oldChat.innerHTML;
+    const newChat = document.getElementById('war-room-chat');
+    if (oldChat && newChat) newChat.innerHTML = oldChat.innerHTML;
 
-    // Start Logs
+    // Start Fake Logs
     setInterval(() => {
         const logs = document.getElementById('system-logs');
-        if(logs) logs.innerHTML = `[${new Date().toLocaleTimeString()}] RECV_PACKET_${Math.floor(Math.random()*999)}... OK<br>` + logs.innerHTML.substring(0, 500);
+        if(logs) {
+            logs.innerHTML = `[${new Date().toLocaleTimeString()}] RECV_PACKET_${Math.floor(Math.random()*999)}... OK<br>` + logs.innerHTML.substring(0, 500);
+        }
     }, 2000);
 }
 
-const serviceIntel = { 'LLC': "Total liability protection.", 'AI': "24/7 generation.", 'DISTRO': "Multi-platform restreaming.", 'WEB': "Proprietary ecosystems." };
+const serviceIntel = { 
+    'LLC': "Total liability protection initialized.", 
+    'AI': "24/7 Digital Twin generation active.", 
+    'DISTRO': "Multi-platform restreaming engaged.", 
+    'WEB': "Proprietary server ecosystems online." 
+};
+
 window.requestServiceDetail = (type) => {
     const detail = serviceIntel[type];
     const chat = document.getElementById('war-room-chat');
-    chat.innerHTML += `<div style="margin-bottom:15px;"><strong style="color:#ef4444">ADAM:</strong> <span style="color:#aaa">${detail}</span></div>`;
-    chat.scrollTop = chat.scrollHeight;
+    if (chat) {
+        chat.innerHTML += `<div style="margin-bottom:15px;"><strong style="color:#ef4444">ADAM:</strong> <span style="color:#aaa">${detail}</span></div>`;
+        chat.scrollTop = chat.scrollHeight;
+    }
     speak(detail);
 };
