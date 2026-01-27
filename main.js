@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     initLiquidBg();
     
-    // Scroll Observer
+    // Scroll Observer: Makes sections fade in as you scroll
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) entry.target.classList.add('visible');
@@ -11,36 +11,42 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.scroll-fade-section').forEach(s => observer.observe(s));
 });
 
-// MASTER LOGIN & BOUNCER LOGIC
-function handleEnter(event) {
-    if (event.key === 'Enter') {
-        const input = document.getElementById('user-input');
-        const val = input.value.trim();
+// --- AI CHAT LOGIC ---
+const WEBHOOK_URL = "YOUR_N8N_WEBHOOK_URL_HERE"; // PASTE YOUR LINK HERE
 
-        // MASTER CREDENTIAL CHECK
-        if (val === "Elitename Elitepassword") {
-            grantMasterAccess();
-            input.value = "";
-        } else {
-            sendMessage();
-        }
+window.sendMessage = async function() {
+    const input = document.getElementById('user-input');
+    const container = document.getElementById('chat-messages');
+    const text = input.value.trim();
+
+    if (!text) return;
+
+    // Add user message to UI
+    container.innerHTML += `<div class="msg user"><strong>YOU:</strong> ${text}</div>`;
+    input.value = "";
+    container.scrollTop = container.scrollHeight;
+
+    try {
+        const response = await fetch(WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: text })
+        });
+        
+        const data = await response.json();
+        // Add AI response (looking for 'output' from n8n)
+        const reply = data.output || data.text || "Accessing database...";
+        container.innerHTML += `<div class="msg ai"><strong>AGENT ADAM:</strong> ${reply}</div>`;
+        container.scrollTop = container.scrollHeight;
+    } catch (err) {
+        container.innerHTML += `<div class="msg ai"><strong>SYSTEM:</strong> Connection failed. Check n8n webhook.</div>`;
     }
-}
+};
 
-function grantMasterAccess() {
-    localStorage.setItem('empire_auth', 'true');
-    const chat = document.getElementById('chat-messages');
-    const level = document.getElementById('security-level');
-    
-    level.innerHTML = `<i class="fas fa-skull"></i> SECURITY LEVEL: OMEGA`;
-    level.style.color = "#ff4444";
-
-    addMessage("ai", "MASTER ACCESS GRANTED. Initializing advanced toolsets... Agent Adam standing by for OMEGA commands.");
-}
-
-// LIQUID BACKGROUND LOGIC
+// --- BACKGROUND ANIMATION ---
 function initLiquidBg() {
     const canvas = document.getElementById('liquid-bg');
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
     let w, h, particles = [];
 
@@ -48,7 +54,6 @@ function initLiquidBg() {
         w = canvas.width = window.innerWidth;
         h = canvas.height = window.innerHeight;
     };
-
     window.addEventListener('resize', resize);
     resize();
 
@@ -74,5 +79,3 @@ function initLiquidBg() {
     }
     animate();
 }
-
-// Existing toggleChat and sendMessage functions go here...

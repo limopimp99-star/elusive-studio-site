@@ -4,41 +4,43 @@
     --bg-dark: #050505;
 }
 
-/* 1. RESET & CORE */
 * { box-sizing: border-box; }
 
 html, body {
-    margin: 0; padding: 0; 
-    background: var(--bg-dark); 
-    color: white; 
+    margin: 0; 
+    padding: 0;
+    background: var(--bg-dark);
+    color: white;
     font-family: 'Inter', sans-serif;
     overflow-x: hidden;
-    overflow-y: auto; /* ALLOWS SCROLLING */
-    height: auto;
+    overflow-y: auto !important; /* Forces scrolling to work */
+    min-height: 100vh;
 }
 
-/* 2. BACKGROUND LAYER */
-#canvas-container { position: fixed; inset: 0; z-index: -3; background: #000; }
-canvas { display: block; }
-
-.red-pulse {
-    position: absolute; width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(239, 68, 68, 0.1) 0%, transparent 70%);
-    filter: blur(80px); animation: pulseFloat 15s infinite alternate;
-    pointer-events: none;
-}
-@keyframes pulseFloat { 
-    from { transform: translate(-10%, -10%); } 
-    to { transform: translate(100%, 80%); } 
+/* 1. BACKGROUND LAYER */
+#canvas-container { 
+    position: fixed; 
+    inset: 0; 
+    z-index: -3; 
+    background: #000; 
 }
 
-/* 3. NAVIGATION */
+/* 2. NAVIGATION */
 .glass-nav {
-    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-    width: 90%; max-width: 1200px; padding: 1rem 2rem;
-    background: var(--glass); backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.05); border-radius: 50px;
-    display: flex; justify-content: space-between; align-items: center;
+    position: fixed; 
+    top: 20px; 
+    left: 50%; 
+    transform: translateX(-50%);
+    width: 90%; 
+    max-width: 1200px; 
+    padding: 1rem 2rem;
+    background: var(--glass); 
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.05); 
+    border-radius: 50px;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
     z-index: 1000;
 }
 
@@ -46,70 +48,45 @@ canvas { display: block; }
 .nav-logo span { color: var(--neon-red); }
 
 .nav-links a { 
-    color: #888; text-decoration: none; margin-left: 20px; 
-    transition: 0.3s; font-weight: 600; font-size: 0.8rem; 
-    text-transform: uppercase;
+    color: #888; 
+    text-decoration: none; 
+    margin-left: 20px; 
+    transition: 0.3s; 
+    font-weight: 600; 
+    font-size: 0.8rem; 
 }
 .nav-links a:hover { color: var(--neon-red); }
 
-/* 4. HERO SECTION */
+/* 3. HERO SECTION (The fix for the Image & Glow) */
 .high-res-hero { 
-    min-height: 100vh; width: 100%;
-    display: flex; align-items: center; justify-content: center; 
-    position: relative; overflow: hidden;
-    padding-top: 100px; /* SPACE FOR NAV */
+    height: 100vh; 
+    width: 100%;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    position: relative; 
+    overflow: hidden;
+    background: #000;
 }
 
 .hero-bg-img {
-    position: absolute; top: 0; left: 0;
-    width: 100%; height: 100%;
-    object-fit: cover; z-index: -1;
-    opacity: 0.6;
+    position: absolute; 
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
+    object-fit: cover; 
+    z-index: 1; /* Moves it in front of the black background layer */
+    opacity: 0.7; /* Adjusted so text is easier to read */
 }
 
-.hero-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to bottom, transparent, var(--bg-dark));
-    z-index: 0;
+.hero-content { 
+    text-align: center; 
+    z-index: 10; /* Keeps text in front of the image */
+    padding: 0 20px; 
 }
-
-.hero-content { text-align: center; z-index: 2; padding: 0 20px; }
 
 .gaussian-text { 
     font-size: clamp(2.5rem, 8vw, 6rem);
-    font-weight: 900; letter-spacing: -2px; line-height: 0.9; margin: 0 0 20px 0;
-}
-
-.fade-text { color: #aaa; margin-bottom: 30px; font-size: 1.1rem; }
-
-/* 5. BUTTON STYLING */
-.cta-btn {
-    background: var(--neon-red); color: white; border: none;
-    padding: 15px 35px; border-radius: 5px; font-weight: 800;
-    text-transform: uppercase; cursor: pointer; transition: 0.3s;
-}
-
-/* 6. AI INTERFACE */
-.ai-interface { position: fixed; bottom: 30px; right: 30px; z-index: 2000; }
-.ai-interface.closed .ai-chat-box { display: none; }
-
-.ai-avatar { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--neon-red); cursor: pointer; }
-.ai-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-
-.ai-chat-box {
-    width: 350px; height: 500px; background: #0a0a0a; border: 1px solid #222;
-    border-radius: 15px; display: flex; flex-direction: column; overflow: hidden;
-    position: absolute; bottom: 80px; right: 0; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-}
-
-.chat-header { padding: 15px; background: #111; border-bottom: 1px solid #222; display: flex; justify-content: space-between; }
-.chat-messages { flex: 1; padding: 15px; overflow-y: auto; color: white; }
-.chat-input-area { padding: 15px; display: flex; gap: 10px; }
-.chat-input-area input { flex: 1; background: #000; border: 1px solid #333; color: white; padding: 10px; }
-
-/* 7. MOBILE RESPONSIVENESS */
-@media (max-width: 768px) {
-    .nav-links { display: none; }
-    .gaussian-text { font-size: 3rem; }
-    .ai-chat-box { width: calc(100vw - 40px); height: 60vh; right: -10px; }
-}
+    font-weight: 900; 
+    color: #ffffff;
