@@ -3,54 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elusive Studio | The Jerry Maguire of AI Content</title>
-    <meta name="description" content="We don't just manage; we build empires. AI cloning, LLC setup, and 24/7 production for elite creators.">
-    <link rel="stylesheet" href="style.css">
+    <title>ElusiveStudio | Management X Human Solutions</title>
     
-    <script src="header.js" defer></script>
-    <script src="hero.js" defer></script>
-    <script src="services.js" defer></script>
-    <script src="contact-section.js" defer></script> 
-    <script src="pricing.js" defer></script>
-    <script src="testimonials.js" defer></script>
-    <script src="faq.js" defer></script>
-    <script src="footer.js" defer></script>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        fetch('https://api.ipify.org?format=json')
-          .then(response => response.json())
-          .then(data => {
-            const ipField = document.querySelector('input[name="user_ip"]');
-            if(ipField) {
-              ipField.value = data.ip;
-              console.log("Empire tracking active. IP captured:", data.ip);
-            }
-          })
-          .catch(err => console.error("IP capture failed:", err));
-      });
-    </script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="fixed-bg"></div>
-    <elusive-header></elusive-header>
+
+<div id="canvas-container">
+    <canvas id="liquid-bg"></canvas>
+    <div class="red-pulse"></div>
+</div>
+
+<nav class="glass-nav">
+    <div class="nav-logo">ELUSIVE<span>STUDIO</span></div>
+    <div class="nav-links">
+        <a href="#home">INTRODUCTION</a>
+        <a href="javascript:void(0)" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">MEDIA</a>
+        <a href="javascript:void(0)" onclick="openWarRoom()">WAR ROOM</a>
+    </div>
+</nav>
+
+<main>
+    <section id="home" class="scroll-fade-section">
+        <div class="high-res-hero">
+            <img src="https://images.unsplash.com/photo-1580414057403-c5f451f30e1c?q=80&w=2564&auto=format&fit=crop" 
+                 alt="Empire Building" class="hero-bg-img">
+            <div class="hero-overlay"></div> 
+            <div class="hero-content">
+                <h1 class="gaussian-text">IGNITE YOUR <br> SOCIAL LIFE</h1>
+                <p class="fade-text">We don't just manage. We build empires.</p>
+                <button class="cta-btn" onclick="openWarRoom()">JOIN THE WAR ROOM</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="scroll-fade-section">
+        <crimson-features></crimson-features>
+    </section>
+</main>
+
+<div id="ai-bouncer" class="ai-interface closed">
+    <div class="ai-avatar" onclick="toggleChat()">
+        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=500&auto=format&fit=crop" alt="Agent Adam">
+        <div class="status-dot"></div>
+        <div class="pulse-ring"></div>
+    </div>
     
-    <main>
-        <section id="home"><elusive-hero></elusive-hero></section>
-        <section id="services"><elusive-services></elusive-services></section>
-        <section id="contact"><elusive-contact></elusive-contact></section>
-        <section id="pricing"><elusive-pricing></elusive-pricing></section>
-        <elusive-testimonials></elusive-testimonials>
-        <section id="faq"><elusive-faq></elusive-faq></section>
-    </main>
+    <div class="ai-chat-box">
+        <div class="chat-header">
+            <span id="security-level"><i class="fas fa-shield-alt"></i> SECURITY LEVEL: 1</span>
+            <button onclick="toggleChat()" class="close-chat">X</button>
+        </div>
+        
+        <div class="chat-messages" id="chat-messages">
+            <audio id="agent-voice" hidden></audio> 
+            <div class="msg ai">
+                <strong>AGENT ADAM:</strong> Identify yourself. Use credentials to gain OMEGA access.
+            </div>
+        </div>
 
-    <form name="contact" netlify netlify-honeypot="bot-field" hidden>
-      <input type="text" name="name" />
-      <input type="email" name="email" />
-      <textarea name="message"></textarea>
-      <input type="hidden" name="user_ip" />
-    </form>
+        <div class="chat-input-area">
+            <input type="text" id="user-input" placeholder="Enter credentials..." onkeypress="handleEnter(event)">
+            <button id="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+</div>
 
-    <elusive-footer></elusive-footer>
+<script src="hero.js"></script>
+<script src="script.js"></script>
+<script src="main.js"></script>
+<script>
+    // Simple helper to open the chat if "War Room" is clicked
+    function openWarRoom() {
+        const bouncer = document.getElementById('ai-bouncer');
+        bouncer.classList.remove('closed');
+        document.getElementById('user-input').focus();
+    }
+</script>
 </body>
 </html>
