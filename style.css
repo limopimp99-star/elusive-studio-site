@@ -7,12 +7,14 @@
 /* 1. RESET & CORE */
 * { box-sizing: border-box; }
 
-body {
+html, body {
     margin: 0; padding: 0; 
     background: var(--bg-dark); 
     color: white; 
     font-family: 'Inter', sans-serif;
     overflow-x: hidden;
+    overflow-y: auto; /* ALLOWS SCROLLING */
+    height: auto;
 }
 
 /* 2. BACKGROUND LAYER */
@@ -50,11 +52,12 @@ canvas { display: block; }
 }
 .nav-links a:hover { color: var(--neon-red); }
 
-/* 4. HERO SECTION (The fix for the bunching) */
+/* 4. HERO SECTION */
 .high-res-hero { 
-    height: 100vh; width: 100%;
+    min-height: 100vh; width: 100%;
     display: flex; align-items: center; justify-content: center; 
     position: relative; overflow: hidden;
+    padding-top: 100px; /* SPACE FOR NAV */
 }
 
 .hero-bg-img {
@@ -73,8 +76,8 @@ canvas { display: block; }
 .hero-content { text-align: center; z-index: 2; padding: 0 20px; }
 
 .gaussian-text { 
-    font-size: clamp(2.5rem, 8vw, 6rem); /* Responsive font size */
-    font-weight: 900; letter-spacing: -2px; line-height: 0.9; margin-bottom: 20px;
+    font-size: clamp(2.5rem, 8vw, 6rem);
+    font-weight: 900; letter-spacing: -2px; line-height: 0.9; margin: 0 0 20px 0;
 }
 
 .fade-text { color: #aaa; margin-bottom: 30px; font-size: 1.1rem; }
@@ -85,16 +88,12 @@ canvas { display: block; }
     padding: 15px 35px; border-radius: 5px; font-weight: 800;
     text-transform: uppercase; cursor: pointer; transition: 0.3s;
 }
-.cta-btn:hover { transform: scale(1.05); background: white; color: var(--neon-red); }
 
-/* 6. AI INTERFACE (The Bouncer) */
+/* 6. AI INTERFACE */
 .ai-interface { position: fixed; bottom: 30px; right: 30px; z-index: 2000; }
 .ai-interface.closed .ai-chat-box { display: none; }
 
-.ai-avatar {
-    width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--neon-red);
-    cursor: pointer; position: relative; overflow: visible;
-}
+.ai-avatar { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--neon-red); cursor: pointer; }
 .ai-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 
 .ai-chat-box {
@@ -103,26 +102,14 @@ canvas { display: block; }
     position: absolute; bottom: 80px; right: 0; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
 }
 
-.chat-header { padding: 15px; background: #111; border-bottom: 1px solid #222; display: flex; justify-content: space-between; font-size: 0.7rem; color: #666; }
-.chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-.chat-input-area { padding: 15px; display: flex; gap: 10px; background: #111; }
-.chat-input-area input { flex: 1; background: #000; border: 1px solid #333; color: white; padding: 10px; border-radius: 5px; }
+.chat-header { padding: 15px; background: #111; border-bottom: 1px solid #222; display: flex; justify-content: space-between; }
+.chat-messages { flex: 1; padding: 15px; overflow-y: auto; color: white; }
+.chat-input-area { padding: 15px; display: flex; gap: 10px; }
+.chat-input-area input { flex: 1; background: #000; border: 1px solid #333; color: white; padding: 10px; }
 
-/* 7. MOBILE RESPONSIVENESS (Phone Friendly Version) */
+/* 7. MOBILE RESPONSIVENESS */
 @media (max-width: 768px) {
-    .glass-nav {
-        width: 95%; padding: 0.8rem 1rem;
-    }
-    
-    .nav-links { display: none; } /* Hide text links, or use a burger menu */
-    
+    .nav-links { display: none; }
     .gaussian-text { font-size: 3rem; }
-    
-    .ai-chat-box {
-        width: calc(100vw - 40px); /* Fill screen on phones */
-        height: 70vh;
-        right: -10px;
-    }
-
-    section { padding: 60px 20px; }
+    .ai-chat-box { width: calc(100vw - 40px); height: 60vh; right: -10px; }
 }
