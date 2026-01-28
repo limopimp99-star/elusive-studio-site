@@ -4,21 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ElusiveStudio | Management X Human Solutions</title>
-    <meta name="description" content="We don't just manage; we build online empires. Web creation, App Building, AI cloning, LLC setup, Branding, Copyriting and 24/7 production for elite creators.">
+    <meta name="description" content="We don't just manage; we build online empires. Web creation, App Building, AI cloning, LLC setup, Branding, Copywriting and 24/7 production for elite creators.">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script src="header.js" defer></script>
     <script src="hero.js" defer></script>
     <script src="services.js" defer></script>
-    <script src="tools.js" defer></script> <script src="contact-section.js" defer></script> 
+    <script src="tools.js" defer></script> 
+    <script src="contact-section.js" defer></script> 
     <script src="pricing.js" defer></script>
     <script src="testimonials.js" defer></script>
     <script src="faq.js" defer></script>
     <script src="footer.js" defer></script>
     
     <script src="main.js" defer></script>
+
+    <audio id="audio-intro" src="intro.mp3" preload="auto"></audio>
+    <audio id="audio-verified" src="verified.mp3" preload="auto"></audio>
+
     <script>
+      // Empire Tracking Logic
       document.addEventListener('DOMContentLoaded', () => {
         fetch('https://api.ipify.org?format=json')
           .then(response => response.json())
@@ -31,6 +37,12 @@
           })
           .catch(err => console.error("IP capture failed:", err));
       });
+
+      // Toggle Chat for the Bouncer
+      function toggleChat() {
+          const bouncer = document.getElementById('ai-bouncer');
+          bouncer.classList.toggle('closed');
+      }
     </script>
 </head>
 <body>
@@ -81,16 +93,29 @@
 
     <div id="ai-bouncer" class="ai-interface closed">
         <div class="ai-avatar-container" onclick="toggleChat()">
-            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=500" alt="Agent Adam" class="ai-avatar-img">
+            <img src="war-room-logo.png" alt="Agent Adam" class="ai-avatar-img" id="adam-visual-bouncer">
             <div class="status-dot"></div>
         </div>
+        
         <div class="ai-chat-box">
             <div class="chat-header">
-                <span id="security-level"><i class="fas fa-shield-alt"></i> SECURITY LEVEL: 1</span>
-                <button onclick="toggleChat()" class="close-chat">X</button>
+                <span id="security-level"><i class="fas fa-shield-alt"></i> SYSTEM STATUS: ACTIVE</span>
+                <button onclick="toggleChat()" class="close-chat">_</button>
             </div>
+            
             <div class="chat-messages" id="chat-messages">
-                <div class="msg ai"><strong>AGENT ADAM:</strong> Identify yourself. Use credentials for access.</div>
+                <div class="msg ai"><strong>SYSTEM:</strong> [WAITING FOR UPLINK...]</div>
+            </div>
+
+            <div class="chat-input-area">
+                <input type="text" id="user-input" placeholder="Type credentials or 'OMEGA'..." onkeypress="window.handleEnter(event)">
+                <button onclick="window.sendMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
             </div>
             <div class="chat-input-area">
                 <input type="text" id="user-input" placeholder="Credentials..." onkeypress="handleEnter(event)">

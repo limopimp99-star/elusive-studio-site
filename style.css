@@ -1,8 +1,12 @@
 /* --- 1. CORE THEME & LAYOUT --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap');
+
 :root {
     --neon-red: #ef4444;
+    --neon-red-dim: rgba(239, 68, 68, 0.3);
     --bg-dark: #050505;
-    --glass: rgba(15, 15, 15, 0.85);
+    --glass: rgba(10, 10, 10, 0.75);
+    --glass-border: rgba(239, 68, 68, 0.15);
 }
 
 * { box-sizing: border-box; }
@@ -16,34 +20,44 @@ body, html {
     scroll-behavior: smooth;
 }
 
-/* --- 2. BACKGROUND & ATMOSPHERE --- */
+/* --- 2. CRT SCANLINE OVERLAY (NEW) --- */
+body::after {
+    content: "";
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none; z-index: 99999;
+    opacity: 0.4;
+}
+
+/* --- 3. BACKGROUND & ATMOSPHERE --- */
 #canvas-container { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
 
 #cursor-glow {
     position: fixed; width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(239, 68, 68, 0.08) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(239, 68, 68, 0.06) 0%, transparent 70%);
     border-radius: 50%; pointer-events: none; z-index: 0;
-    transform: translate(-50%, -50%); transition: transform 0.1s ease-out;
+    transform: translate(-50%, -50%); transition: transform 0.08s ease-out;
 }
 
 .red-pulse {
     position: fixed; top: 50%; left: 50%; width: 80vw; height: 80vw;
-    background: radial-gradient(circle, rgba(239, 68, 68, 0.25) 0%, transparent 70%);
-    transform: translate(-50%, -50%); filter: blur(80px); z-index: -2; pointer-events: none;
-    animation: pulseGlow 4s infinite alternate ease-in-out;
+    background: radial-gradient(circle, rgba(239, 68, 68, 0.15) 0%, transparent 70%);
+    transform: translate(-50%, -50%); filter: blur(100px); z-index: -2; pointer-events: none;
+    animation: pulseGlow 6s infinite alternate ease-in-out;
 }
 
 @keyframes pulseGlow { 
-    from { opacity: 0.3; transform: translate(-50%, -50%) scale(0.8); } 
-    to { opacity: 1; transform: translate(-50%, -50%) scale(1.2); } 
+    from { opacity: 0.2; transform: translate(-50%, -50%) scale(0.9); } 
+    to { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); } 
 }
 
-/* --- 3. SCROLL REVEAL (INTENSE BLUR) --- */
+/* --- 4. SCROLL REVEAL (INTENSE BLUR) --- */
 .scroll-fade-section {
     opacity: 0;
-    filter: blur(20px); /* BCON Intense Blur */
-    transform: translateY(40px) scale(0.95);
-    transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    filter: blur(15px);
+    transform: translateY(30px) scale(0.98);
+    transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: opacity, filter, transform;
 }
 
@@ -53,80 +67,104 @@ body, html {
     transform: translateY(0) scale(1);
 }
 
-/* --- 4. FLOATING PARTICLES --- */
-.floating-particle {
-    position: absolute; color: rgba(239, 68, 68, 0.3);
-    font-family: serif; pointer-events: none; z-index: 1;
-    animation: float-around 20s infinite linear;
-}
-
-@keyframes float-around {
-    0% { transform: translate(0, 0) rotate(0deg); }
-    50% { transform: translate(50px, 100px) rotate(180deg); }
-    100% { transform: translate(0, 0) rotate(360deg); }
-}
-
-/* --- 5. SERVICE CARDS --- */
+/* --- 5. SERVICE CARDS (UPGRADED) --- */
 .service-card {
     background: var(--glass);
-    border: 1px solid rgba(239, 68, 68, 0.2);
-    padding: 2rem; border-radius: 15px; transition: 0.4s;
+    border: 1px solid var(--glass-border);
+    padding: 2.5rem; border-radius: 12px; 
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative; overflow: hidden;
+    backdrop-filter: blur(10px);
 }
+
+.service-card::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(45deg, transparent, rgba(239, 68, 68, 0.05), transparent);
+    transform: translateX(-100%); transition: 0.6s;
+}
+
 .service-card:hover {
     border-color: var(--neon-red);
-    box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
-    transform: translateY(-10px);
-}
-/* War Room Dashboard Styles */
-#war-room-dashboard {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 9999;
-    background: rgba(0,0,0,0.95);
-    overflow-y: auto;
-    animation: glitchIn 0.3s ease-out;
+    box-shadow: 0 0 40px rgba(239, 68, 68, 0.15), inset 0 0 20px rgba(239, 68, 68, 0.05);
+    transform: translateY(-5px);
 }
 
-.db-card {
-    background: rgba(20, 20, 20, 0.8);
-    border: 1px solid #ef4444;
-    padding: 30px;
-    border-radius: 5px;
-    box-shadow: inset 0 0 15px rgba(239, 68, 68, 0.1);
+.service-card:hover::before { transform: translateX(100%); }
+
+/* --- 6. AI INTERFACE (THE BOUNCER) --- */
+.ai-interface {
+    position: fixed; bottom: 30px; right: 30px; z-index: 10000;
+    display: flex; flex-direction: column; align-items: flex-end;
+    font-family: 'JetBrains Mono', monospace;
 }
 
-.db-card h3 {
-    margin-top: 0;
-    letter-spacing: 2px;
-    color: #ef4444;
-}
-
-@keyframes glitchIn {
-    0% { opacity: 0; filter: brightness(2) blur(10px); }
-    100% { opacity: 1; filter: brightness(1) blur(0px); }
-}
-.op-card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid #222;
-    padding: 20px;
-    cursor: pointer;
+.ai-avatar-container {
+    width: 70px; height: 70px; border-radius: 50%;
+    background: #000; border: 2px solid #333;
+    overflow: hidden; cursor: pointer; position: relative;
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
     transition: all 0.3s ease;
 }
-.op-card:hover {
-    border-color: #ef4444;
-    background: rgba(239, 68, 68, 0.05);
-    transform: translateY(-2px);
+
+.ai-avatar-container:hover { border-color: var(--neon-red); transform: scale(1.1); }
+
+.ai-avatar-img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); }
+
+.status-dot {
+    position: absolute; bottom: 5px; right: 5px; width: 12px; height: 12px;
+    background: #0f0; border-radius: 50%; border: 2px solid #000;
+    animation: blinkStatus 2s infinite;
 }
-.op-card h3 {
-    color: #ef4444;
-    margin: 0 0 5px 0;
-    font-size: 0.9rem;
+
+.ai-chat-box {
+    width: 320px; background: rgba(5, 5, 5, 0.95);
+    border: 1px solid #333; border-radius: 8px;
+    margin-bottom: 15px; overflow: hidden;
+    display: flex; flex-direction: column;
+    transition: all 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    transform-origin: bottom right;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8);
 }
-.op-card p {
-    color: #666;
-    margin: 0;
-    font-size: 0.75rem;
+
+.ai-interface.closed .ai-chat-box {
+    opacity: 0; transform: scale(0) translateY(20px); pointer-events: none;
+}
+
+.chat-header {
+    background: #111; padding: 12px; border-bottom: 1px solid #333;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.75rem; color: #666; letter-spacing: 1px;
+}
+
+.chat-messages {
+    height: 250px; overflow-y: auto; padding: 15px;
+    font-size: 0.85rem; color: #ddd; line-height: 1.5;
+    background: radial-gradient(circle at top, #111, #000);
+}
+
+.chat-input-area {
+    display: flex; border-top: 1px solid #333;
+}
+
+.chat-input-area input {
+    flex: 1; background: transparent; border: none; padding: 15px;
+    color: white; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+    outline: none;
+}
+
+.chat-input-area button {
+    background: var(--neon-red); border: none; color: white;
+    padding: 0 20px; cursor: pointer; font-weight: bold;
+    transition: background 0.2s;
+}
+
+.chat-input-area button:hover { background: #ff0000; }
+
+@keyframes blinkStatus { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+/* MOBILE RESPONSIVE TWEAKS */
+@media (max-width: 768px) {
+    .ai-interface { bottom: 10px; right: 10px; }
+    .ai-chat-box { width: 90vw; }
+    #cursor-glow { display: none; } /* Save battery on mobile */
 }
