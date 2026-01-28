@@ -1,5 +1,5 @@
-const CACHE_NAME = 'empire-war-room-v1';
-const ASSETS = [
+const CACHE_NAME = 'empire-v2';
+const assets = [
   '/',
   '/index.html',
   '/style.css',
@@ -9,10 +9,27 @@ const ASSETS = [
   '/verified.mp3'
 ];
 
-self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
+// Install Service Worker
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll(assets);
+    })
+  );
 });
 
-self.addEventListener('fetch', (e) => {
-  e.respondWith(caches.match(e.request).then((response) => response || fetch(e.request)));
+// Activate & Cleanup Old Caches
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys => {
+      return Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key)));
+    })
+  );
+});
+
+// Fetch Strategy: Network First, then Cache
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    fetch(event.request).catch(() => caches.match(event.request))
+  );
 });
