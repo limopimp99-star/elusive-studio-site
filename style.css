@@ -1,150 +1,92 @@
-/* --- 1. CORE THEME & LAYOUT --- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap');
+/* --- AI CHAT WIDGET INTERNAL LAYOUT (FIXED) --- */
 
-:root {
-    --neon-red: #ef4444;
-    --bg-dark: #050505;
-    --glass: rgba(10, 10, 10, 0.75);
-    --glass-border: rgba(239, 68, 68, 0.15);
-}
-
-* { box-sizing: border-box; }
-
-body, html {
-    margin: 0; padding: 0;
-    background-color: var(--bg-dark);
-    color: white;
-    font-family: 'Inter', sans-serif;
-    overflow-x: hidden;
-    scroll-behavior: smooth;
-    cursor: crosshair; /* High-tech cursor */
-}
-
-/* --- 2. CRT SCANLINE (SUBTLE GRID) --- */
-body::after {
-    content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-    background-size: 100% 2px, 3px 100%;
-    pointer-events: none; z-index: 99999;
-    opacity: 0.15;
-}
-
-/* --- 3. MOUSE GLOW & NOISE --- */
-#cursor-glow {
-    position: fixed; width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(239,68,68,0.08) 0%, transparent 60%);
-    transform: translate(-50%, -50%); pointer-events: none; z-index: 1;
-    mix-blend-mode: screen; transition: width 0.1s, height 0.1s;
-}
-
-.noise-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; z-index: 9000; opacity: 0.04;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-}
-
-/* --- 4. PRELOADER --- */
-#preloader {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: #000; z-index: 10000;
-    display: flex; justify-content: center; align-items: center;
-    transition: opacity 0.5s ease;
-}
-.terminal-loader { font-family: 'Courier New', monospace; text-align: center; }
-.terminal-loader .text { color: #ef4444; margin-bottom: 10px; font-weight: bold; letter-spacing: 2px; }
-.progress-bar { width: 200px; height: 4px; background: #333; margin: 0 auto; position: relative; }
-.progress-bar .fill {
-    height: 100%; background: #ef4444; width: 0%;
-    animation: loadSystem 1.5s ease-in-out forwards;
-    box-shadow: 0 0 10px #ef4444;
-}
-@keyframes loadSystem { 0% { width: 0%; } 100% { width: 100%; } }
-
-/* --- 5. BACKGROUND EFFECTS --- */
-#canvas-container { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
-.red-pulse {
-    position: fixed; top: 50%; left: 50%; width: 80vw; height: 80vw;
-    background: radial-gradient(circle, rgba(239, 68, 68, 0.1) 0%, transparent 70%);
-    transform: translate(-50%, -50%); filter: blur(80px); z-index: -2;
-    animation: pulseGlow 6s infinite alternate ease-in-out;
-}
-@keyframes pulseGlow { 
-    from { opacity: 0.2; transform: translate(-50%, -50%) scale(0.9); } 
-    to { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); } 
-}
-
-/* --- 6. SCROLL REVEAL (CLEANED) --- */
-.scroll-fade-section {
-    opacity: 0;
-    filter: blur(20px);
-    transform: translateY(100px) scale(0.95);
-    transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
-}
-.scroll-fade-section.visible {
-    opacity: 1;
-    filter: blur(0px);
-    transform: translateY(0) scale(1);
-}
-
-/* --- 7. AI INTERFACE (MOBILE FIX APPLIED) --- */
-.ai-interface { 
-    position: fixed; 
-    bottom: 30px; 
-    left: 30px; 
-    z-index: 9999; 
-    display: flex; 
-    flex-direction: column; 
-    align-items: flex-start;
-    
-    /* THE MAGICAL FIX: Allows clicks to pass through empty space */
-    pointer-events: none; 
-}
-
-/* RE-ENABLE CLICKS FOR BUTTONS/CHAT */
-.ai-avatar-container, 
 .ai-chat-box {
-    pointer-events: auto; 
+    /* 1. DEFINE THE BOX SIZE */
+    width: 350px;
+    height: 400px; /* Fixed height so it doesn't collapse */
+    background: rgba(5, 5, 5, 0.95); /* Nearly solid black for readability */
+    border: 1px solid #ef4444;
+    border-radius: 8px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.9);
+    
+    /* 2. THE FLEXBOX STACK (The Magic Fix) */
+    display: flex; 
+    flex-direction: column; /* Forces vertical stacking */
+    overflow: hidden; /* Keeps content inside the border */
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    pointer-events: auto; /* Ensures you can click it */
 }
 
-/* MOBILE ADJUSTMENTS */
-@media (max-width: 768px) { 
-    .ai-interface { 
-        bottom: 10px; 
-        left: 10px; 
-        right: 10px; 
-    } 
-    .ai-chat-box { 
-        width: 100%; 
-        max-width: 350px;
-    } 
-}
-
-/* --- 8. SIDE BUTTON (RIGHT SIDE - FINAL VERSION) --- */
-.side-apply-btn {
-    position: fixed;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%) rotate(-90deg);
-    transform-origin: right center;
-    background: #ef4444;
-    color: white;
-    border: 2px solid #ef4444;
-    padding: 15px 30px;
-    font-weight: 900;
-    font-size: 1rem;
-    letter-spacing: 3px;
-    font-family: 'Inter', sans-serif;
-    cursor: pointer;
-    z-index: 10000;
-    border-radius: 6px 6px 0 0;
-    box-shadow: -5px 0 20px rgba(239, 68, 68, 0.5);
-    transition: 0.3s;
-    margin-right: -2px;
-}
-
-.side-apply-btn:hover {
-    background: black;
+/* --- TOP: HEADER --- */
+.chat-header {
+    background: #111;
+    padding: 12px 15px; /* Breathing room */
+    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between; /* Pushes Text left, X right */
+    align-items: center;
     color: #ef4444;
-    box-shadow: -5px 0 30px rgba(239, 68, 68, 1);
-    padding-bottom: 45px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    min-height: 50px; /* Forces a minimum height so it can't squish */
+}
+
+.close-chat {
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0 10px; /* Bigger touch target for fingers */
+    transition: 0.3s;
+}
+.close-chat:hover { color: white; }
+
+/* --- MIDDLE: MESSAGES --- */
+.chat-messages {
+    flex: 1; /* Fills all available space between header and input */
+    overflow-y: auto; /* Allows scrolling if text gets long */
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* --- BOTTOM: INPUT --- */
+.chat-input-area {
+    padding: 15px;
+    border-top: 1px solid #333;
+    display: flex;
+    gap: 10px;
+    background: #080808;
+    min-height: 60px; /* Forces space for the input bar */
+}
+
+.chat-input-area input {
+    flex: 1;
+    background: #111;
+    border: 1px solid #333;
+    color: white;
+    padding: 8px;
+    border-radius: 4px;
+    font-family: inherit;
+}
+
+/* --- MOBILE SPECIFIC OVERRIDES --- */
+@media (max-width: 768px) {
+    .ai-interface {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 15px; /* Keeps it away from screen edges */
+        align-items: center; /* Centers the box */
+    }
+
+    .ai-chat-box {
+        width: 100%; /* Uses full width of the padding area */
+        max-width: none;
+        height: 50vh; /* Takes up 50% of the screen height */
+        margin-bottom: 10px; /* Spacing from bottom edge */
+    }
 }
