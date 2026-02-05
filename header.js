@@ -1,87 +1,96 @@
 class ElusiveHeader extends HTMLElement {
-    constructor() { super(); this.attachShadow({ mode: 'open' }); }
-
     connectedCallback() {
-        this.render();
-        this.setupEventListeners();
-    }
-
-    render() {
+        this.attachShadow({ mode: 'open' });
         this.shadowRoot.innerHTML = `
             <style>
-                :host { position: sticky; top: 0; z-index: 1000; display: block; width: 100%; }
-                header {
-                    background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px);
-                    padding: 0.8rem 5%; display: flex; justify-content: space-between; align-items: center;
-                    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                }
+                :host { display: block; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; }
                 
-                /* THE RESTORED LOGO FADE ANIMATION */
+                /* HEADER BASE STYLES */
+                header { 
+                    display: flex; 
+                    justify-content: space-between; 
+                    align-items: center; 
+                    padding: 20px 40px; 
+                    background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+                    backdrop-filter: blur(2px); 
+                    transition: all 0.4s ease;
+                }
+
+                /* SCROLLED STATE (Solid Black) */
+                header.scrolled {
+                    background: #000000;
+                    padding: 15px 40px;
+                    border-bottom: 1px solid #222;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+                }
+
+                /* "GHOST PROTOCOL" ANIMATION */
                 .logo { 
-                    font-family: 'Courier New', monospace; font-weight: 900; 
-                    color: #fff; text-decoration: none; text-transform: uppercase; letter-spacing: 2px;
-                    animation: logo-fade 4s ease-in-out infinite; /* The "Vanish" Effect */
+                    font-weight: 900; 
+                    letter-spacing: 3px; 
+                    color: white; 
+                    text-decoration: none; 
+                    font-size: 1.2rem; 
+                    text-transform: uppercase; 
+                    /* 4s cycle: Fades out, waits, fades in */
+                    animation: ghost-fade 4s infinite ease-in-out;
                 }
                 .logo span { color: #ef4444; }
 
-                @keyframes logo-fade {
-                    0%, 100% { opacity: 1; }
-                    50% { opacity: 0.3; }
+                @keyframes ghost-fade {
+                    0% { 
+                        opacity: 1; 
+                        text-shadow: 0 0 20px rgba(239, 68, 68, 0.8); 
+                        filter: blur(0px);
+                    }
+                    45% { 
+                        opacity: 0.1; /* Almost invisible */
+                        text-shadow: none; 
+                        filter: blur(2px); /* Slight blur as it vanishes */
+                    }
+                    55% {
+                        opacity: 0.1; /* Stay invisible for a moment */
+                    }
+                    100% { 
+                        opacity: 1; 
+                        text-shadow: 0 0 20px rgba(239, 68, 68, 0.8); 
+                        filter: blur(0px);
+                    }
                 }
 
-                nav { display: flex; gap: 2rem; align-items: center; }
-                .nav-link { 
-                    color: #aaa; text-decoration: none; font-size: 0.8rem; font-weight: 600; 
-                    cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+                nav { display: flex; gap: 30px; align-items: center; }
+                nav a { color: #ccc; text-decoration: none; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; transition: 0.3s; font-weight: 600; }
+                nav a:hover { color: white; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+                
+                /* SPECIAL LINKS */
+                .gear-link { color: #ef4444 !important; }
+                .deploy-btn { 
+                    border: 1px solid #ef4444; padding: 8px 20px; color: #ef4444 !important; 
+                    border-radius: 4px; transition: 0.3s; background: rgba(239, 68, 68, 0.1);
                 }
-                .nav-link:hover { color: white; }
+                .deploy-btn:hover { background: #ef4444; color: black !important; box-shadow: 0 0 15px #ef4444; }
 
-                .war-room-btn {
-                    padding: 0.6rem 1.4rem; background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
-                    color: white; border: 1px solid #ef4444; border-radius: 4px; font-weight: 800;
-                    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: 0.3s;
-                }
-                .war-room-btn:hover { background: black; color: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.6); }
-
-                /* MOBILE */
-                .mobile-toggle { display: none; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
-                @media (max-width: 768px) {
-                    nav { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #000; flex-direction: column; padding: 1rem 0; }
-                    nav.active { display: flex; }
-                    .mobile-toggle { display: block; }
-                }
+                @media (max-width: 768px) { nav { display: none; } }
             </style>
-
-            <header>
-                <a href="#home" class="logo">Elusive<span>Studio</span></a>
-                <button class="mobile-toggle">☰</button>
-                <nav id="nav-menu">
-                    <a class="nav-link" data-target="home">Introduction</a>
-                    <a class="nav-link" data-target="services">Media</a>
-                    <a class="nav-link" data-target="tools">Tools</a>
-                    <button class="war-room-btn" id="war-room-trigger">War Room</button>
+            
+            <header id="main-header">
+                <a href="#" class="logo">ELUSIVE<span>STUDIO</span></a>
+                <nav>
+                    <a href="#services">Protocols</a>
+                    <a href="#tools">Arsenal</a>
+                    <a href="https://www.insta360.com/sal/x5?utm_source=AffiliateCenter&utm_medium=copylink&utm_term=INRVI5H" target="_blank" class="gear-link">GEAR</a>
+                    <a href="https://cal.com/mrlive305/war-room-kick-off" target="_blank" class="deploy-btn">DEPLOY</a>
                 </nav>
             </header>
         `;
-    }
 
-    setupEventListeners() {
-        const root = this.shadowRoot;
-        root.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const target = document.getElementById(e.target.dataset.target);
-                if(target) target.scrollIntoView({ behavior: 'smooth' });
-            });
-        });
-        
-        // This button opens the War Room
-        root.getElementById('war-room-trigger').addEventListener('click', () => {
-            if(window.openWarRoom) window.openWarRoom();
-        });
-
-        root.querySelector('.mobile-toggle').addEventListener('click', () => {
-            root.getElementById('nav-menu').classList.toggle('active');
+        const header = this.shadowRoot.getElementById('main-header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
         });
     }
 }

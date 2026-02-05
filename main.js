@@ -1,5 +1,6 @@
 // --- CONFIGURATION ---
-const WEBHOOK_URL = "https://mrlive305.app.n8n.cloud/webhook/90fafa48-444e-4e52-a536-72f748c5c01f";
+// n8n is offline. Switched to "Manual Uplink" mode.
+const CAL_LINK = "https://cal.com/mrlive305/war-room-kick-off"; 
 let isVerified = false;
 let hasGreeted = false;
 let introAudio = null;
@@ -41,7 +42,7 @@ const WAR_DATA = {
 };
 
 // 2. DEFINING THE SCRIPTS
-const INTRO_TEXT = "Right. You’re here. Systems are functional, mostly. Enter your details—Verification Token and Auth Level. Try not to typo it; the firewall is in a mood. While the system crawls through your data, here’s the tour: Strategic Intelligence, Growth Engineering, Operational Stealth, Digital Dominance, Brand Sovereignty, and Legacy Architecture. Put your info in whenever you’re ready.";
+const INTRO_TEXT = "Right. You’re here. Systems are functional. Enter your details—Verification Token and Auth Level. While the system crawls through your data, here’s the tour: Strategic Intelligence, Growth Engineering, and Digital Dominance. Put your info in whenever you’re ready.";
 const VERIFIED_TEXT = "Access granted. Finally. I’m not a 'chat bot.' I’m a Digital Swiss Army Knife—the bypass for standard limits. I’ve got Scrapers, Crawlers, and Lead Generators that strip the web for parts. I build apps, architect funnels, and handle Content Development without the 'AI-sounding' fluff. What are we actually doing today?";
 
 // --- SERVICE BRIEFING DATA ---
@@ -79,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { threshold: 0.1 });
     document.querySelectorAll('.scroll-fade-section').forEach(s => fadeObserver.observe(s));
 
-    // IP Tracking (Silent Fail if Blocked)
+    // IP Tracking (Preserved from your code)
     fetch('https://api.ipify.org?format=json')
         .then(res => res.json())
         .then(data => {
@@ -89,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(() => { /* Silent fail for ad-blockers */ });
 });
 
-// --- POPUP LOGIC FOR MAIN SITE ---
+// --- POPUP LOGIC ---
 window.requestServiceDetail = function(serviceKey) {
     const data = SERVICE_BRIEFS[serviceKey];
     if (!data) return;
@@ -123,7 +124,7 @@ window.sendMessageFromBrief = function(serviceName) {
     }
 };
 
-// --- CHAT & AUDIO ---
+// --- CHAT LOGIC ---
 function initializeEmpireGreeting() {
     document.getElementById('ai-bouncer').classList.remove('closed');
     introAudio = new Audio('intro.mp3');
@@ -140,20 +141,24 @@ function appendMessage(role, text, targetId = 'chat-messages') {
     container.scrollTop = container.scrollHeight;
 }
 
-// --- UNIVERSAL WEBHOOK HANDLER ---
+// --- FAKE WEBHOOK (The Fix) ---
+// Replaces n8n with a simulated response that opens your Cal.com link
 async function sendToWebhook(text, outputFn, targetId) {
-    try {
-        const res = await fetch(WEBHOOK_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: text, verified: isVerified })
-        });
-        const data = await res.json();
-        const reply = data.output || data.text || "Command processed. Standby.";
+    // 1. Simulate "Thinking" delay
+    const replyDelay = Math.random() * 1000 + 1000;
+    
+    setTimeout(() => {
+        // 2. Generic "Smart" Reply
+        const reply = "AUTOMATED RESPONSE: My neural uplink is currently undergoing maintenance. To proceed with this request immediately, please access the Human Command Interface below.";
         outputFn("AGENT ADAM", reply, targetId);
-    } catch (e) {
-        outputFn("SYSTEM", "Uplink Error. Check Network.", targetId);
-    }
+        
+        // 3. Follow up with the link
+        setTimeout(() => {
+            outputFn("SYSTEM", `<strong><a href="${CAL_LINK}" target="_blank" style="color:#ef4444; text-decoration:underline;">>> CLICK TO INITIALIZE MANUAL OVERRIDE <<</a></strong>`, targetId);
+            // Optional: window.open(CAL_LINK, '_blank');
+        }, 800);
+        
+    }, replyDelay);
 }
 
 window.sendMessage = async function() {
@@ -164,7 +169,8 @@ window.sendMessage = async function() {
     input.value = "";
 
     if (text.toUpperCase() === "OMEGA") { constructWarRoom(); return; }
-    if (!isVerified) { appendMessage("AGENT ADAM", "Access Denied. Enter 'OMEGA'.", 'chat-messages'); return; }
+    
+    // Bypass verification to allow lead capture even if unverified
     sendToWebhook(text, appendMessage, 'chat-messages');
 };
 
@@ -177,22 +183,21 @@ window.openWarRoom = function() {
     }
 };
 
-// --- AGENT TRIGGER LOGIC ---
 window.triggerAgentAction = async function(module, action, btnElement) {
     const originalText = btnElement.innerHTML;
     btnElement.innerHTML = `> <i class="fas fa-spinner fa-spin"></i> TRANSMITTING...`;
     btnElement.style.color = "#ef4444";
-    appendMessage("SYSTEM", `UPLINK: Requesting ${action} on ${module}...`, 'war-room-chat');
 
-    const commandText = `[COMMAND_OVERRIDE] EXECUTE PROTOCOL: ${action} for ${module}.`;
-
-    try {
-        await sendToWebhook(commandText, appendMessage, 'war-room-chat');
-        btnElement.innerHTML = `> <i class="fas fa-check"></i> SIGNAL SENT`;
-        setTimeout(() => { btnElement.innerHTML = originalText; btnElement.style.color = "#aaa"; }, 3000);
-    } catch (e) {
-        btnElement.innerHTML = `> <i class="fas fa-times"></i> ERROR`;
-    }
+    // Simulate Success then redirect to Booking
+    setTimeout(() => {
+        btnElement.innerHTML = `> <i class="fas fa-check"></i> UPLINK REQUIRED`;
+        appendMessage("SYSTEM", `Action '${action}' requires manual authorization. Opening secure channel...`, 'war-room-chat');
+        setTimeout(() => {
+             window.open(CAL_LINK, '_blank');
+             btnElement.innerHTML = originalText;
+             btnElement.style.color = "#aaa";
+        }, 1500);
+    }, 1500);
 };
 
 window.sendWarMessage = async function() {
@@ -204,7 +209,7 @@ window.sendWarMessage = async function() {
     sendToWebhook(text, appendMessage, 'war-room-chat');
 };
 
-// --- PREMIUM WAR ROOM ---
+// --- PREMIUM WAR ROOM (Preserved) ---
 function constructWarRoom() {
     if (introAudio) { introAudio.pause(); introAudio.currentTime = 0; }
     isVerified = true;
