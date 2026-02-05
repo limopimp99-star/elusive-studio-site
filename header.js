@@ -1,53 +1,88 @@
 class ElusiveHeader extends HTMLElement {
+    constructor() { super(); this.attachShadow({ mode: 'open' }); }
+
     connectedCallback() {
-        this.attachShadow({ mode: 'open' });
+        this.render();
+        this.setupEventListeners();
+    }
+
+    render() {
         this.shadowRoot.innerHTML = `
             <style>
+                :host { position: sticky; top: 0; z-index: 1000; display: block; width: 100%; }
                 header {
-                    background: rgba(0,0,0,0.9); backdrop-filter: blur(20px);
-                    padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center;
-                    border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 100;
+                    background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px);
+                    padding: 0.8rem 5%; display: flex; justify-content: space-between; align-items: center;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
                 }
                 
-                /* THE RESTORED LOGO ANIMATION */
+                /* THE RESTORED LOGO FADE ANIMATION */
                 .logo { 
-                    font-weight: 900; color: #fff; text-decoration: none; 
-                    text-transform: uppercase; letter-spacing: 2px;
-                    animation: logo-fade 4s ease-in-out infinite;
+                    font-family: 'Courier New', monospace; font-weight: 900; 
+                    color: #fff; text-decoration: none; text-transform: uppercase; letter-spacing: 2px;
+                    animation: logo-fade 4s ease-in-out infinite; /* The "Vanish" Effect */
                 }
                 .logo span { color: #ef4444; }
 
                 @keyframes logo-fade {
-                    0%, 100% { opacity: 1; transform: scale(1); }
-                    50% { opacity: 0.2; transform: scale(0.98); }
+                    0%, 100% { opacity: 1; }
+                    50% { opacity: 0.3; }
                 }
 
-                nav { display: flex; gap: 1.5rem; align-items: center; }
-                .nav-link { color: #aaa; text-decoration: none; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: 0.3s; }
-                .nav-link:hover { color: #ef4444; }
-
-                /* CONTACT BUTTON */
-                .contact-btn {
-                    padding: 0.6rem 1.2rem; background: #ef4444; color: white;
-                    text-decoration: none; border-radius: 8px; font-weight: 800;
-                    font-size: 0.8rem; text-transform: uppercase; transition: 0.3s;
+                nav { display: flex; gap: 2rem; align-items: center; }
+                .nav-link { 
+                    color: #aaa; text-decoration: none; font-size: 0.8rem; font-weight: 600; 
+                    cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
                 }
-                .contact-btn:hover { background: white; color: #ef4444; }
+                .nav-link:hover { color: white; }
 
+                .war-room-btn {
+                    padding: 0.6rem 1.4rem; background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+                    color: white; border: 1px solid #ef4444; border-radius: 4px; font-weight: 800;
+                    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: 0.3s;
+                }
+                .war-room-btn:hover { background: black; color: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.6); }
+
+                /* MOBILE */
+                .mobile-toggle { display: none; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
                 @media (max-width: 768px) {
-                    header { padding: 1rem; flex-direction: row; }
-                    .nav-link { display: none; } /* Hide text links on mobile for space */
+                    nav { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #000; flex-direction: column; padding: 1rem 0; }
+                    nav.active { display: flex; }
+                    .mobile-toggle { display: block; }
                 }
             </style>
+
             <header>
                 <a href="#home" class="logo">Elusive<span>Studio</span></a>
-                <nav>
-                    <a class="nav-link" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">Services</a>
-                    <a class="nav-link" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">Pricing</a>
-                    <a href="mailto:manager@elusive.studio" class="contact-btn">Contact</a>
+                <button class="mobile-toggle">☰</button>
+                <nav id="nav-menu">
+                    <a class="nav-link" data-target="home">Introduction</a>
+                    <a class="nav-link" data-target="services">Media</a>
+                    <a class="nav-link" data-target="tools">Tools</a>
+                    <button class="war-room-btn" id="war-room-trigger">War Room</button>
                 </nav>
             </header>
         `;
+    }
+
+    setupEventListeners() {
+        const root = this.shadowRoot;
+        root.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.getElementById(e.target.dataset.target);
+                if(target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+        
+        // This button opens the War Room
+        root.getElementById('war-room-trigger').addEventListener('click', () => {
+            if(window.openWarRoom) window.openWarRoom();
+        });
+
+        root.querySelector('.mobile-toggle').addEventListener('click', () => {
+            root.getElementById('nav-menu').classList.toggle('active');
+        });
     }
 }
 customElements.define('elusive-header', ElusiveHeader);

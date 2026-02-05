@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ElusiveStudio | Management X Human Solutions</title>
-    <meta name="description" content="We don't just manage; we build online empires. Web creation, App Building, AI cloning, LLC setup, and 24/7 production.">
+    
+    <meta name="description" content="We install the systems, legal structures, and strategies that allow high-level founders to scale without burnout.">
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ef4444">
@@ -13,6 +14,8 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
+    <script src="https://tally.so/widgets/embed.js"></script>
+
     <script src="header.js" defer></script>
     <script src="hero.js" defer></script>
     <script src="services.js" defer></script>
@@ -24,68 +27,61 @@
     <script src="footer.js" defer></script>
     <script src="main.js" defer></script>
 </head>
-<body>
+<body class="loading">
+
+    <div id="preloader">
+        <div class="terminal-loader">
+            <div class="text">ELUSIVE_OS // BOOTING SEQUENCE...</div>
+            <div class="progress-bar"><div class="fill"></div></div>
+        </div>
+    </div>
+
+    <div class="noise-overlay"></div>
+    <div id="cursor-glow"></div>
+
     <div id="canvas-container">
         <canvas id="liquid-bg"></canvas>
         <div class="red-pulse"></div>
-        <div id="cursor-glow"></div>
     </div>
 
     <audio id="audio-intro" src="intro.mp3" preload="auto"></audio>
     <audio id="audio-verified" src="verified.mp3" preload="auto"></audio>
-
+<button class="side-apply-btn" 
+        data-tally-open="Y5aXxB" 
+        data-tally-layout="modal" 
+        data-tally-emoji-text="👋" 
+        data-tally-emoji-animation="wave">
+    APPLY
+</button>
     <elusive-header></elusive-header>
     
     <main>
-        <section id="home" class="scroll-fade-section">
-            <elusive-hero></elusive-hero>
-        </section>
-        <section id="services" class="scroll-fade-section">
-            <elusive-services></elusive-services>
-        </section>
-        <section id="tools" class="scroll-fade-section">
-            <elusive-tools></elusive-tools>
-        </section>
-        <section id="pricing" class="scroll-fade-section">
-            <elusive-pricing></elusive-pricing>
-        </section>
-        <section id="testimonials" class="scroll-fade-section">
-            <elusive-testimonials></elusive-testimonials>
-        </section>
-        <section id="contact" class="scroll-fade-section">
-            <elusive-contact></elusive-contact>
-        </section>
-        <section id="faq" class="scroll-fade-section">
-            <elusive-faq></elusive-faq>
-        </section>
+        <section id="home" class="scroll-fade-section"><elusive-hero></elusive-hero></section>
+        <section id="services" class="scroll-fade-section"><elusive-services></elusive-services></section>
+        <section id="tools" class="scroll-fade-section"><elusive-tools></elusive-tools></section>
+        <section id="pricing" class="scroll-fade-section"><elusive-pricing></elusive-pricing></section>
+        <section id="testimonials" class="scroll-fade-section"><elusive-testimonials></elusive-testimonials></section>
+        <section id="contact" class="scroll-fade-section"><elusive-contact></elusive-contact></section>
+        <section id="faq" class="scroll-fade-section"><elusive-faq></elusive-faq></section>
     </main>
 
-    <form name="contact" netlify netlify-honeypot="bot-field" hidden>
-      <input type="text" name="name" />
-      <input type="email" name="email" />
-      <textarea name="message"></textarea>
-      <input type="hidden" name="user_ip" />
-    </form>
-
     <div id="ai-bouncer" class="ai-interface closed">
-        <div class="ai-avatar-container" onclick="toggleChat()" role="button" aria-label="Open Chat">
-            <img src="war-room-logo.png" alt="Agent Adam AI Avatar" class="ai-avatar-img" id="adam-visual-bouncer">
+        <div class="ai-avatar-container" onclick="toggleChat()" role="button">
+            <img src="war-room-logo.png" alt="Agent Adam" class="ai-avatar-img" id="adam-visual-bouncer">
             <div class="status-dot"></div>
         </div>
         
         <div class="ai-chat-box">
             <div class="chat-header">
-                <span id="security-level"><i class="fas fa-shield-alt"></i> STATUS: ACTIVE</span>
-                <button onclick="toggleChat()" class="close-chat" aria-label="Close Chat">_</button>
+                <span><i class="fas fa-shield-alt"></i> STATUS: ACTIVE</span>
+                <button onclick="toggleChat()" class="close-chat">✕</button>
             </div>
-            
             <div class="chat-messages" id="chat-messages">
                 <div class="msg ai"><strong>SYSTEM:</strong> [WAITING FOR UPLINK...]</div>
             </div>
-
             <div class="chat-input-area">
-                <input type="text" id="user-input" placeholder="Enter 'OMEGA'..." aria-label="Chat Message Input" onkeypress="window.handleEnter(event)">
-                <button onclick="window.sendMessage()" aria-label="Send Message"><i class="fas fa-paper-plane"></i></button>
+                <input type="text" id="user-input" placeholder="Type 'OMEGA'..." onkeypress="window.handleEnter(event)">
+                <button onclick="window.sendMessage()"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
@@ -98,14 +94,29 @@
           if(bouncer) bouncer.classList.toggle('closed');
       }
       
-      // IP Tracking
+      document.addEventListener('mousemove', (e) => {
+          const glow = document.getElementById('cursor-glow');
+          if(glow) {
+              glow.style.left = e.clientX + 'px';
+              glow.style.top = e.clientY + 'px';
+          }
+      });
+
+      window.addEventListener('load', () => {
+          const preloader = document.getElementById('preloader');
+          setTimeout(() => {
+              preloader.style.opacity = '0';
+              setTimeout(() => {
+                  preloader.style.display = 'none';
+                  document.body.classList.remove('loading');
+              }, 500);
+          }, 1500);
+      });
+
       document.addEventListener('DOMContentLoaded', () => {
         fetch('https://api.ipify.org?format=json')
           .then(res => res.json())
-          .then(data => {
-            const f = document.querySelector('input[name="user_ip"]');
-            if(f) f.value = data.ip;
-          })
+          .then(data => { const f = document.querySelector('input[name="user_ip"]'); if(f) f.value = data.ip; })
           .catch(e => console.log("Tracking blocked"));
       });
     </script>
