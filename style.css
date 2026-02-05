@@ -251,7 +251,7 @@ body::after {
     padding-bottom: 45px;
 }
 
-/* --- 9. MOBILE FIXES (FINAL) --- */
+/* --- 9. MOBILE FIXES (FINAL CORRECTED) --- */
 @media (max-width: 768px) {
     /* Hide the cursor glow to prevent horizontal scrolling */
     #cursor-glow { display: none !important; }
@@ -261,16 +261,16 @@ body::after {
 
     /* AI Interface Adjustments */
     .ai-interface { 
-        bottom: 10px; 
-        left: 10px; 
-        right: 10px; 
-        align-items: center; /* Center it */
+        bottom: 20px; 
+        left: 20px; 
+        right: 20px; /* Prevents overflow */
+        align-items: flex-start; /* <--- FIX: KEEPS IT ON THE LEFT */
     } 
     
     .ai-chat-box { 
         width: 100%; 
-        max-width: 350px;
-        height: 50vh; /* Half screen height */
+        max-width: 300px; /* Keeps it from getting too wide on phones */
+        height: 50vh; 
         margin-bottom: 10px;
     }
 }
