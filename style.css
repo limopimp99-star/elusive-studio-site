@@ -20,14 +20,13 @@ body, html {
     cursor: crosshair; /* High-tech cursor */
 }
 
-/* --- 2. CRT SCANLINE (FIXED - SUBTLE) --- */
-/* This creates the "cubed" look. I lowered opacity to 0.1 so it's not distracting */
+/* --- 2. CRT SCANLINE (SUBTLE GRID) --- */
 body::after {
     content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
     background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
     background-size: 100% 2px, 3px 100%;
     pointer-events: none; z-index: 99999;
-    opacity: 0.15; /* ADJUST THIS IF YOU WANT LESS GRID */
+    opacity: 0.15;
 }
 
 /* --- 3. MOUSE GLOW & NOISE --- */
@@ -74,88 +73,12 @@ body::after {
     to { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); } 
 }
 
-/* --- 6. SCROLL REVEAL --- */
-.scroll-fade-section {
-    opacity: 0; filter: blur(10px); transform: translateY(30px);
-    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.scroll-fade-section.visible { opacity: 1; filter: blur(0px); transform: translateY(0); }
-
-/* --- 7. AI INTERFACE (BOUNCER) --- */
-.ai-interface {
-    position: fixed; 
-    bottom: 30px; 
-    left: 30px; /* MOVED TO LEFT */
-    z-index: 9999;
-    display: flex; 
-    flex-direction: column; 
-    align-items: flex-start; /* ALIGN ITEMS TO LEFT */
-}
-
-.ai-avatar-container {
-    width: 60px; height: 60px; border-radius: 50%; background: #000; border: 2px solid #333;
-    overflow: hidden; cursor: pointer; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.8);
-    transition: 0.3s;
-}
-.ai-avatar-container:hover { border-color: var(--neon-red); transform: scale(1.1); }
-.ai-avatar-img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); }
-.status-dot {
-    position: absolute; bottom: 5px; right: 5px; width: 10px; height: 10px;
-    background: #0f0; border-radius: 50%; border: 2px solid #000; animation: blinkStatus 2s infinite;
-}
-
-.ai-chat-box {
-    width: 320px; background: rgba(5, 5, 5, 0.95); border: 1px solid #333; border-radius: 8px;
-    margin-bottom: 15px; overflow: hidden; display: flex; flex-direction: column;
-    transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); 
-    transform-origin: bottom left; /* ANIMATE FROM BOTTOM LEFT */
-}
-
-.ai-interface.closed .ai-chat-box { opacity: 0; transform: scale(0) translateY(20px); pointer-events: none; }
-.chat-header { background: #111; padding: 12px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; color: #666; font-size: 0.75rem; }
-.chat-messages { height: 250px; overflow-y: auto; padding: 15px; font-size: 0.85rem; color: #ddd; background: #080808; }
-.chat-input-area { display: flex; border-top: 1px solid #333; }
-.chat-input-area input { flex: 1; background: transparent; border: none; padding: 15px; color: white; outline: none; }
-.chat-input-area button { background: var(--neon-red); border: none; color: white; padding: 0 20px; cursor: pointer; }
-
-/* Keep existing mobile tweak, just ensure alignment */
-@media (max-width: 768px) { 
-    .ai-interface { bottom: 10px; left: 10px; } 
-    .ai-chat-box { width: 85vw; }
-    #cursor-glow { display: none; } 
-}
-/* --- SIDE TALLY BUTTON (MOVED TO RIGHT) --- */
-.side-apply-btn {
-    position: fixed;
-    top: 50%;
-    right: 0; /* CHANGED FROM LEFT TO RIGHT */
-    transform: translateY(-50%) rotate(-90deg);
-    transform-origin: right center; /* Pivot from the right */
-    background: #ef4444;
-    color: white;
-    border: none;
-    padding: 10px 25px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    font-family: 'Inter', sans-serif;
-    cursor: pointer;
-    z-index: 10000;
-    border-radius: 4px 4px 0 0; /* Rounded top corners (visually left when rotated) */
-    box-shadow: -5px 0 15px rgba(239, 68, 68, 0.4); /* Shadow points inward */
-    transition: 0.3s;
-    margin-right: -1px; /* Tuck it to the edge */
-}
-
-.side-apply-btn:hover {
-    background: white;
-    color: black;
-    padding-bottom: 35px; /* Slide out effect */
-}
+/* --- 6. SCROLL REVEAL (CLEANED) --- */
 .scroll-fade-section {
     opacity: 0;
-    filter: blur(20px); /* Increased blur */
-    transform: translateY(100px) scale(0.95); /* Starts much lower and slightly smaller */
-    transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1); /* Longer, smoother transition */
+    filter: blur(20px);
+    transform: translateY(100px) scale(0.95);
+    transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 .scroll-fade-section.visible {
     opacity: 1;
@@ -163,7 +86,40 @@ body::after {
     transform: translateY(0) scale(1);
 }
 
-/* --- IMPROVED SIDE TALLY BUTTON --- */
+/* --- 7. AI INTERFACE (MOBILE FIX APPLIED) --- */
+.ai-interface { 
+    position: fixed; 
+    bottom: 30px; 
+    left: 30px; 
+    z-index: 9999; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: flex-start;
+    
+    /* THE MAGICAL FIX: Allows clicks to pass through empty space */
+    pointer-events: none; 
+}
+
+/* RE-ENABLE CLICKS FOR BUTTONS/CHAT */
+.ai-avatar-container, 
+.ai-chat-box {
+    pointer-events: auto; 
+}
+
+/* MOBILE ADJUSTMENTS */
+@media (max-width: 768px) { 
+    .ai-interface { 
+        bottom: 10px; 
+        left: 10px; 
+        right: 10px; 
+    } 
+    .ai-chat-box { 
+        width: 100%; 
+        max-width: 350px;
+    } 
+}
+
+/* --- 8. SIDE BUTTON (RIGHT SIDE - FINAL VERSION) --- */
 .side-apply-btn {
     position: fixed;
     top: 50%;
@@ -172,16 +128,16 @@ body::after {
     transform-origin: right center;
     background: #ef4444;
     color: white;
-    border: 2px solid #ef4444; /* Added border */
-    padding: 15px 30px; /* Made larger */
+    border: 2px solid #ef4444;
+    padding: 15px 30px;
     font-weight: 900;
-    font-size: 1rem; /* Larger font */
+    font-size: 1rem;
     letter-spacing: 3px;
     font-family: 'Inter', sans-serif;
     cursor: pointer;
     z-index: 10000;
     border-radius: 6px 6px 0 0;
-    box-shadow: -5px 0 20px rgba(239, 68, 68, 0.5); /* Stronger shadow */
+    box-shadow: -5px 0 20px rgba(239, 68, 68, 0.5);
     transition: 0.3s;
     margin-right: -2px;
 }
@@ -190,5 +146,5 @@ body::after {
     background: black;
     color: #ef4444;
     box-shadow: -5px 0 30px rgba(239, 68, 68, 1);
-    padding-bottom: 45px; /* Larger slide out */
+    padding-bottom: 45px;
 }
