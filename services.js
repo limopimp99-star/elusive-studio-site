@@ -15,6 +15,67 @@ class ElusiveServices extends HTMLElement {
                     background: rgba(5, 5, 5, 0.9); z-index: 0;
                 }
                 .container { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+                
+                /* --- THE VSL COMMAND CENTER STYLES --- */
+                .vsl-container {
+                    max-width: 900px;
+                    margin: 0 auto 6rem auto;
+                    position: relative;
+                }
+                .vsl-header {
+                    display: flex;
+                    justify-content: space-between;
+                    color: #ef4444;
+                    font-family: 'JetBrains Mono', monospace, sans-serif;
+                    font-size: 0.8rem;
+                    letter-spacing: 2px;
+                    margin-bottom: 10px;
+                    border-bottom: 1px solid rgba(239, 68, 68, 0.3);
+                    padding-bottom: 8px;
+                    text-transform: uppercase;
+                }
+                .status-blink { animation: blink 2s infinite; }
+                @keyframes blink { 50% { opacity: 0.4; } }
+
+                .vsl-player-wrapper {
+                    position: relative;
+                    padding-top: 56.25%;
+                    background: #000;
+                    border: 1px solid #ef4444;
+                    border-radius: 8px;
+                    box-shadow: 0 0 40px rgba(239, 68, 68, 0.3);
+                    overflow: hidden;
+                }
+                .vsl-player-wrapper iframe {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    border: none;
+                    outline: none;
+                }
+
+                /* Custom Secure Overlay */
+                .secure-overlay {
+                    position: absolute; inset: 0; z-index: 10;
+                    background: rgba(0, 0, 0, 0.85) url('static/war-room-logo.8381561db3.png') center/cover;
+                    background-blend-mode: overlay;
+                    display: flex; align-items: center; justify-content: center;
+                    cursor: pointer; transition: 0.3s;
+                }
+                .secure-overlay:hover { background-color: rgba(0, 0, 0, 0.7); }
+                .play-btn-ui {
+                    background: rgba(10, 10, 10, 0.9); padding: 25px 40px; 
+                    border: 2px solid #ef4444; border-radius: 8px; text-align: center;
+                    box-shadow: 0 0 30px rgba(239, 68, 68, 0.4);
+                    transition: 0.3s;
+                }
+                .secure-overlay:hover .play-btn-ui { transform: scale(1.05); box-shadow: 0 0 40px rgba(239, 68, 68, 0.8); }
+                .play-btn-ui i { font-size: 3rem; color: #ef4444; margin-bottom: 15px; }
+                .play-btn-ui div { color: white; font-family: 'JetBrains Mono', monospace; font-weight: bold; letter-spacing: 3px; }
+                /* ------------------------------------- */
+
                 h2 { font-size: 3rem; text-align: center; margin-bottom: 4rem; text-transform: uppercase; letter-spacing: 2px; color: white; }
                 span { color: #ef4444; }
                 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
@@ -32,6 +93,26 @@ class ElusiveServices extends HTMLElement {
             
             <section>
                 <div class="container">
+                    
+                    <div class="vsl-container">
+                        <div class="vsl-header">
+                            <span><i class="fas fa-lock"></i> SECURE TRANSMISSION</span>
+                            <span class="status-blink">STATUS: DECLASSIFIED</span>
+                        </div>
+                        <div class="vsl-player-wrapper">
+                            
+                            <div class="secure-overlay" id="yt-overlay">
+                                <div class="play-btn-ui">
+                                    <i class="fas fa-play"></i>
+                                    <div>INITIALIZE PLAYBACK</div>
+                                </div>
+                            </div>
+
+                            <iframe id="yt-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                            
+                        </div>
+                    </div>
+
                     <h2>OUR <span>PROTOCOLS</span></h2>
                     <div class="grid">
                         <div class="card" onclick="window.requestServiceDetail('LLC')">
@@ -62,6 +143,37 @@ class ElusiveServices extends HTMLElement {
                 </div>
             </section>
         `;
+
+        // --- YOUTUBE OVERLAY & RESOURCE PAUSE PROTOCOL ---
+        const overlay = this.shadowRoot.getElementById('yt-overlay');
+        const iframe = this.shadowRoot.getElementById('yt-iframe');
+
+        if (overlay && iframe) {
+            overlay.addEventListener('click', (e) => {
+                e.stopPropagation(); // Stops Agent Adam from waking up
+
+                // 1. Hide the Command Center UI
+                overlay.style.display = 'none';
+
+                // 2. Inject YouTube Video with Autoplay & Origin Bypass
+                const youtubeID = "ma23GmXhmGA"; 
+                iframe.src = "https://www.youtube.com/embed/" + youtubeID + "?autoplay=1&rel=0&modestbranding=1&origin=" + window.location.origin;
+
+                // 3. Silence Agent Adam if he is talking
+                if (typeof introAudio !== 'undefined' && introAudio) {
+                    introAudio.pause();
+                }
+                const domAudio = document.getElementById('audio-intro');
+                if (domAudio) {
+                    domAudio.pause();
+                }
+
+                // 4. Kill lag by disabling heavy background CSS
+                document.body.classList.add('vsl-active');
+                const liquidBg = document.getElementById('liquid-bg');
+                if (liquidBg) liquidBg.style.display = 'none';
+            });
+        }
     }
 }
 customElements.define('elusive-services', ElusiveServices);

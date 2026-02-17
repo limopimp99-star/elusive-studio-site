@@ -274,3 +274,13 @@ body::after {
         margin-bottom: 10px;
     }
 }
+
+/* --- 10. VSL ACTIVE MODE (LAG REDUCTION) --- */
+body.vsl-active::after, 
+body.vsl-active .noise-overlay {
+    display: none !important;
+}
+
+body.vsl-active #cursor-glow {
+    opacity: 0 !important;
+}
