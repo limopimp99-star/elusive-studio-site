@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>THE PATIENCE OF UZ • Cinematic Edition</title>
+    <title>THE PATIENCE OF UZ • by MrLive305</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=VT323&display=swap" rel="stylesheet">
     <style>
         :root { 
@@ -961,7 +961,7 @@ function updateAnimalAI(anim, dt, time, flockArr, penTarget) {
         if (Math.random() < 0.02 && data.type === 'sheep') sfx.sheep();
         let awayVec = anim.position.clone().sub(pushSource).normalize(); let penVec = penTarget.clone().sub(anim.position).normalize();
         desiredVelocity.copy(awayVec).multiplyScalar(0.4).add(penVec.multiplyScalar(0.6)).normalize();
-        if (distToPen < 200) { data.secured = true; logUpdate((data.type === 'sheep' ? "Sheep" : (data.type === 'camel' ? "Camel" : "Oxen")) + " guided to fold."); }
+        if (distToPen < 200) { data.secured = true; logUpdate((data.type === 'sheep' ? "Sheep" : (data.type === 'camel' ? "Camel" : "Oxen")) + " guided to fold."); animateCounter(data.type === 'sheep' ? 'v-s' : 'v-c'); }
     } else if (data.state === 'GRAZE') {
         targetSpeed = data.maxSpeed * 0.2; data.grazeTimer -= dt;
         if (data.grazeTimer <= 0) { data.grazeTimer = 2 + Math.random() * 4; data.targetDir.set((Math.random() - 0.5), 0, (Math.random() - 0.5)).normalize(); if(Math.random() < 0.4) targetSpeed = 0; }
@@ -1166,6 +1166,7 @@ async function mainLoop() {
             player.rotation.y = lerpAngle(player.rotation.y, targetRot, dt * 10);
             handleCollisions();
             
+            // Dust kick-up when moving fast
             if (pSpeed > 200 && Math.random() < 0.1) {
                 spawnImpactVFX(new THREE.Vector3(player.position.x, player.position.y - 10, player.position.z), 0xddaa77, true);
             }
@@ -1194,6 +1195,9 @@ async function mainLoop() {
         let pSheep = 0, pCamel = 0;
         flock.forEach(s => { if(player.position.distanceTo(s.position) < 1500) updateAnimalAI(s, dt, time, flock, sheepPenTarget); if(s.userData.secured) pSheep++; });
         camelHerd.forEach(c => { if(player.position.distanceTo(c.position) < 1500) updateAnimalAI(c, dt, time, camelHerd, camelPenTarget); if(c.userData.secured) pCamel++; });
+        
+        if (sim.sheep > 0 && pSheep !== parseInt(document.getElementById('v-s').innerText)) animateCounter('v-s');
+        if (sim.camels > 0 && pCamel !== parseInt(document.getElementById('v-c').innerText)) animateCounter('v-c');
         
         document.getElementById('v-s').innerText = sim.sheep === 0 ? 0 : sim.sheep - 16 + pSheep;
         document.getElementById('v-c').innerText = sim.camels === 0 ? 0 : sim.camels - 5 + pCamel;
