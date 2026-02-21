@@ -195,7 +195,7 @@ const RENDER_PROPS = isMobile ? 25 : 45;
 let scene, camera, renderer, composer, bloomPass, clock, waterMat;
 let isWebGPU = false;
 let player, heroGrp, donkeyGrp, donkeyLegs = [];
-let sim = { day:1, ap:30, grain:140, wood:90, sheep: 7000, camels: 3000, al:60, threat:0, stam:100, mode:'WEALTH', playerState:'MOUNTED', ritual:false, strikes:0, nPos:0, diag:false, round:0, hasAltar:false };
+let sim = { day:1, ap:30, grain:140, wood:90, sheep: 7000, camels: 3000, al:60, threat:0, stam:100, mode:'WEALTH', playerState:'MOUNTED', ritual:false, strikes:0, nPos:0, diag:false, round:0, hasAltar:false, shepherdConvo: 0 };
 let tags = [], flock = [], birds = [], trees = [], enemies = [], npcs = [], colliders = [];
 let camelHerd = [], harvestNodes = [], gameSun, dustSystem, targetCamPos = new THREE.Vector3();
 let keys = {}, camYaw = Math.PI, moveVec = {x:0, z:0}, camLastX = 0, joystickMove = false;
@@ -210,13 +210,7 @@ window.whirlwindGrp = null;
 window.typewriterInt = null;
 window.treeShaders = [];
 
-// EXTENDED MODEL CACHE FOR NETLIFY LOCAL ASSETS
-const modelCache = { 
-    sheep: null, camel: null, job: null, donkey: null, wolf: null, raider: null, house: null, cedar: null, 
-    bird: null, eliphaz: null, bildad: null, zophar: null, wife: null, servant: null, oxen: null, acacia: null,
-    temple: null, bird2: null, buildings: null, clouds: null, shrubs: null, oasis: null, oasis_desert: null, 
-    rainbow: null, sheep_enclosure: null, sun: null
-};
+const modelCache = {};
 const animMixers = [];
 
 // === LOD + INSTANCING SYSTEM ===
@@ -336,13 +330,14 @@ async function preloadAndInit() {
     const txt = document.getElementById('loading-text');
     let loadedCount = 0;
     
-    // ✅ CORRECT LOCAL PATH - uses files from your own Netlify repo
-  const baseURL = "https://pub-b4f35fb4e5964fd1a9aed3bf67bcd7a4.r2.dev/";
+    const baseURL = "https://pub-b4f35fb4e5964fd1a9aed3bf67bcd7a4.r2.dev/";
     
+    // UPDATED WITH CORRECT SPACING AND NEW JOB MODEL
     const modelsToLoad = [
         { name: 'sheep',           path: baseURL + 'sheep.glb' },
         { name: 'camel',           path: baseURL + 'camel.glb' },
-        { name: 'job',             path: baseURL + 'shepherd.glb' },
+        { name: 'job',             path: baseURL + 'shepherd2.glb' }, // Renamed from shepherd (2).glb
+        { name: 'npc_shepherd',    path: baseURL + 'shepherd.glb' },
         { name: 'donkey',          path: baseURL + 'donkey_3d_model_free_download.glb' },
         { name: 'wolf',            path: baseURL + 'wolf_with_rigged_and_animation.glb' },
         { name: 'raider',          path: baseURL + 'raider.glb' },
@@ -399,37 +394,26 @@ async function initEngine() {
     // WEBGPU RENDERER UPGRADE
     if (navigator.gpu) {
         try {
-            renderer = new WebGPURenderer({
-                canvas: document.getElementById('ctx-engine'),
-                antialias: true,
-                powerPreference: "high-performance"
-            });
+            renderer = new WebGPURenderer({ canvas: document.getElementById('ctx-engine'), antialias: true, powerPreference: "high-performance" });
             await renderer.init();
             isWebGPU = true;
-            console.log("🚀 Running in Next-Gen WebGPU Mode");
         } catch (e) {
-            console.warn("WebGPU init failed, falling back to WebGL", e);
             renderer = new THREE.WebGLRenderer({canvas: document.getElementById('ctx-engine'), antialias:false});
         }
     } else {
         renderer = new THREE.WebGLRenderer({canvas: document.getElementById('ctx-engine'), antialias:false});
-        console.log("🎮 Running in WebGL Fallback Mode");
     }
 
     renderer.setSize(view.clientWidth, view.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); 
-    
-    // 2026 Polish: Explicit shadow map needsUpdate
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.shadowMap.autoUpdate = false;
     renderer.shadowMap.needsUpdate = true;
-
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = isMobile ? THREE.NoToneMapping : THREE.ACESFilmicToneMapping;
     if(!isMobile) renderer.toneMappingExposure = 1.15;
 
-    // COMPOSER SETUP
     if (!isWebGPU) {
         composer = new EffectComposer(renderer);
         const renderPass = new RenderPass(scene, camera);
@@ -499,15 +483,15 @@ async function initEngine() {
 }
 
 /** ==========================================
- * GLTF HYBRID SYSTEM (FALLBACK TO PS1 BOXES)
+ * GLTF HYBRID SYSTEM WITH FIXED SCALES
  * ========================================== */
 function buildMountSystem() {
     player = new THREE.Group(); donkeyGrp = new THREE.Group(); heroGrp = new THREE.Group();
     
-    // DONKEY
+    /* FIXED SCALE: Donkey */
     if (modelCache.donkey) {
         const dModel = SkeletonUtils.clone(modelCache.donkey.scene);
-        dModel.scale.set(15,15,15); 
+        dModel.scale.set(35, 35, 35); 
         const mixer = new THREE.AnimationMixer(dModel);
         if(modelCache.donkey.animations && modelCache.donkey.animations.length > 0) mixer.clipAction(modelCache.donkey.animations[0]).play();
         animMixers.push({mixer: mixer, obj: dModel, type: 'donkey'});
@@ -526,11 +510,11 @@ function buildMountSystem() {
         donkeyGrp.userData = { isGLTF: false };
     }
     
-    // HERO
+    /* FIXED SCALE: Hero / Job */
     heroGrp.position.set(0,55,0);
     if (modelCache.job) {
         const jModel = SkeletonUtils.clone(modelCache.job.scene);
-        jModel.scale.set(15,15,15); 
+        jModel.scale.set(45, 45, 45); 
         const mixer = new THREE.AnimationMixer(jModel);
         if(modelCache.job.animations && modelCache.job.animations.length > 0) mixer.clipAction(modelCache.job.animations[0]).play();
         animMixers.push({mixer: mixer, obj: jModel, type: 'job'});
@@ -547,6 +531,7 @@ function buildMountSystem() {
     player.add(donkeyGrp); player.add(heroGrp); scene.add(player); player.position.set(500,0,500);
 }
 
+/* FIXED SCALE: Sheep */
 function spawnSheep() {
     if (!sheepInstances && modelCache.sheep) {
         let geo, mat;
@@ -565,7 +550,7 @@ function spawnSheep() {
     
     if (modelCache.sheep) {
         const sModel = SkeletonUtils.clone(modelCache.sheep.scene);
-        sModel.scale.set(10, 10, 10);
+        sModel.scale.set(1.5, 1.5, 1.5);
         const mixer = new THREE.AnimationMixer(sModel);
         if (modelCache.sheep.animations && modelCache.sheep.animations.length) mixer.clipAction(modelCache.sheep.animations[0]).play();
         animMixers.push({mixer, obj: sGroup, type: 'sheep'});
@@ -590,7 +575,7 @@ function updateInstancedFlock() {
             const matrix = new THREE.Matrix4();
             matrix.makeRotationY(s.rotation.y);
             matrix.setPosition(s.position);
-            matrix.scale(new THREE.Vector3(10,10,10));
+            matrix.scale(new THREE.Vector3(1.5, 1.5, 1.5));
             sheepInstances.setMatrixAt(idx, matrix);
             s.visible = false;
             s.userData.instanceIndex = idx;
@@ -607,6 +592,7 @@ function updateInstancedFlock() {
     sheepInstances.count = Math.max(0, idx); 
 }
 
+/* FIXED SCALE: Camel */
 function spawnCamel() {
     const cGroup = new THREE.Group();
     const cLegs = [];
@@ -614,7 +600,7 @@ function spawnCamel() {
 
     if (modelCache.camel) {
         const cModel = SkeletonUtils.clone(modelCache.camel.scene);
-        cModel.scale.set(18,18,18); 
+        cModel.scale.set(2.5, 2.5, 2.5); 
         const mixer = new THREE.AnimationMixer(cModel);
         if(modelCache.camel.animations && modelCache.camel.animations.length > 0) mixer.clipAction(modelCache.camel.animations[0]).play();
         animMixers.push({mixer: mixer, obj: cGroup, type: 'camel'});
@@ -642,7 +628,7 @@ function spawnBuild(x,z,txt,col,h,radius, modelName=null) {
     const g = new THREE.Group();
     if(modelName && modelCache[modelName]) {
         const m = SkeletonUtils.clone(modelCache[modelName].scene);
-        m.scale.set(10,10,10); 
+        m.scale.set(30, 30, 30); 
         g.add(m);
     } else {
         const b = new THREE.Mesh(new THREE.BoxGeometry(200, h, 200), pbrMat('#'+col.toString(16), 0.9));
@@ -667,21 +653,25 @@ function createMapStuff() {
 
     spawnBuild(800, -400, "Camel Enclosure", 0xa67f52, 60, 150);
     
+    // NPCs including NEW SHEPHERD LOGIC
     const servants = [
-        {n:"Steward Eli", m:"servant", x:-200, z:-100}, 
-        {n:"Leah", m:"wife", x:100, z:100}
+        {n:"Steward Eli", m:"servant", x:-200, z:-100, task: 'IDLE'}, 
+        {n:"Leah", m:"wife", x:100, z:100, task: 'IDLE'},
+        {n:"Head Shepherd", m:"npc_shepherd", x:600, z:-800, task: 'STATIC'} // Will trigger 5-part dialogue
     ];
+
     servants.forEach(s=>{
         const g = new THREE.Group();
         if(modelCache[s.m]) {
             const m = SkeletonUtils.clone(modelCache[s.m].scene);
-            m.scale.set(10,10,10); 
+            m.scale.set(40, 40, 40); // MATCH JOB SCALE
             g.add(m);
         } else {
             const body = new THREE.Mesh(new THREE.BoxGeometry(16,30,16), pbrMat('#285c70')); body.position.y=15;
             g.add(body);
         }
-        g.position.set(s.x, 0, s.z); g.userData = { label:s.n, target: new THREE.Vector3(s.x, 0, s.z), task: 'IDLE', prompted: false };
+        g.position.set(s.x, 0, s.z); 
+        g.userData = { label:s.n, target: new THREE.Vector3(s.x, 0, s.z), task: s.task, prompted: false };
         scene.add(g); tags.push(g); npcs.push(g);
     });
 
@@ -706,18 +696,19 @@ function createMapStuff() {
         window.treeShaders.push(shader);
     };
 
+    /* FIXED SCALE: Trees */
     for(let i=0; i<30; i++) {
         const tGroup = new THREE.Group();
         const useAcacia = modelCache.acacia && Math.random() > 0.5;
         
         if (useAcacia) {
             const m = SkeletonUtils.clone(modelCache.acacia.scene);
-            m.scale.set(20,20,20); 
+            m.scale.set(3, 3, 3); 
             tGroup.add(m);
             tGroup.userData = { type: 'wood', hp: 3, label: "Acacia Tree" };
         } else if (modelCache.cedar) {
             const m = SkeletonUtils.clone(modelCache.cedar.scene);
-            m.scale.set(20,20,20); 
+            m.scale.set(3, 3, 3); 
             tGroup.add(m);
             tGroup.userData = { type: 'wood', hp: 3, label: "Cedar Tree" };
         } else {
@@ -734,18 +725,19 @@ function createMapStuff() {
         for(let i=0; i<20; i++) {
             const shGrp = new THREE.Group();
             const m = SkeletonUtils.clone(modelCache.shrubs.scene);
-            m.scale.set(10,10,10);
+            m.scale.set(2, 2, 2);
             shGrp.add(m);
             shGrp.position.set((Math.random()-0.5)*3000, 0, (Math.random()-0.5)*3000);
             scene.add(shGrp);
         }
     }
 
+    /* FIXED SCALE: Oxen */
     for(let i=0; i<6; i++) {
         const oGroup = new THREE.Group();
         if (modelCache.oxen) {
             const m = SkeletonUtils.clone(modelCache.oxen.scene);
-            m.scale.set(12,12,12); 
+            m.scale.set(5, 5, 5); 
             const mixer = new THREE.AnimationMixer(m);
             if(modelCache.oxen.animations && modelCache.oxen.animations.length > 0) mixer.clipAction(modelCache.oxen.animations[0]).play();
             animMixers.push({mixer: mixer, obj: oGroup});
@@ -791,7 +783,7 @@ function spawnWolf(x,z){
     const wolf = new THREE.Group(); 
     if(modelCache.wolf) {
         const m = SkeletonUtils.clone(modelCache.wolf.scene);
-        m.scale.set(10,10,10); 
+        m.scale.set(8, 8, 8); 
         const mixer = new THREE.AnimationMixer(m);
         if(modelCache.wolf.animations && modelCache.wolf.animations.length > 0) mixer.clipAction(modelCache.wolf.animations[0]).play();
         animMixers.push({mixer: mixer, obj: wolf});
@@ -992,8 +984,8 @@ function updateAnimalAI(anim, dt, time, flockArr, penTarget) {
     const bwdX = anim.position.x - Math.sin(anim.rotation.y) * 10; const bwdZ = anim.position.z - Math.cos(anim.rotation.y) * 10;
     anim.rotation.x += (Math.atan2(getTerrainHeight(bwdX, bwdZ) - getTerrainHeight(fwdX, fwdZ), 20) - anim.rotation.x) * dt * 5;
 
-    const speedRatio = data.speed / data.maxSpeed;
     if(!data.isGLTF) {
+        const speedRatio = data.speed / data.maxSpeed;
         if (speedRatio > 0.1) {
             const animSpeed = time * 15 * (speedRatio > 0.5 ? 1.5 : 1);
             if(data.legs) data.legs.forEach((leg, i) => { leg.rotation.x = Math.sin(animSpeed + (i % 2 === 0 ? 0 : Math.PI)) * 0.6 * speedRatio; });
@@ -1111,7 +1103,15 @@ async function mainLoop() {
         if(dist > 150) npc.userData.prompted = false;
 
         let desiredRot = npc.rotation.y;
-        if(npc.userData.task === 'HERD') {
+        
+        // Static NPCs like the Head Shepherd just look at the player
+        if (npc.userData.task === 'STATIC') {
+            if(dist < 300) {
+                const dirToPlayer = player.position.clone().sub(npc.position).normalize();
+                desiredRot = Math.atan2(dirToPlayer.x, dirToPlayer.z);
+            }
+        } 
+        else if(npc.userData.task === 'HERD') {
             let targetAnimal = null; let minDist = 9999;
             [...flock, ...camelHerd].forEach(a => {
                 if(!a.userData.secured) {
@@ -1133,7 +1133,7 @@ async function mainLoop() {
                 npc.userData.task = 'IDLE';
                 logUpdate(npc.userData.label + " finished herding.");
             }
-        } else {
+        } else { // IDLE
             if(Math.random() < 0.005) npc.userData.target.set(npc.position.x + (Math.random()-0.5)*300, 0, npc.position.z + (Math.random()-0.5)*300);
             const dir = npc.userData.target.clone().sub(npc.position);
             if(dir.length() > 10) { dir.normalize(); npc.position.add(dir.multiplyScalar(20 * dt)); desiredRot = Math.atan2(dir.x, dir.z); }
@@ -1390,12 +1390,44 @@ function npcInteraction() {
     sfx.ui(); vibrate(20);
     if(sim.mode === 'WEALTH') {
         const nearNpc = npcs.find(n => player.position.distanceTo(n.position) < 150);
+        
         if(nearNpc) {
-            openDialogue(nearNpc.userData.label, "Yes, my lord Job?", [
-                {t: "Command: Herd the animals.", f: () => { nearNpc.userData.task = 'HERD'; logUpdate(nearNpc.userData.label + " is securing the herds."); }},
-                {t: "Nevermind.", f: () => {}}
-            ]);
-        } else logUpdate("No one is nearby to hear you.");
+            // NEW HEAD SHEPHERD LOGIC WITH SCRIPTURE
+            if (nearNpc.userData.label === "Head Shepherd") {
+                if (sim.shepherdConvo === 0) {
+                    openDialogue("Head Shepherd", "My lord Job, the flocks are safe. But tell me, how do we find peace when the world around us is so uncertain?", [
+                        {t: "Fear not, for YHWH is with us; be not dismayed, for He is our God. (Isaiah 41:10)", f: () => { sim.al+=5; sim.shepherdConvo++; logUpdate("You encouraged the shepherd."); }},
+                        {t: "We trust in our strong walls.", f: () => { sim.shepherdConvo++; }}
+                    ]);
+                } else if (sim.shepherdConvo === 1) {
+                    openDialogue("Head Shepherd", "You speak truly. But what if enemies come against our estate?", [
+                        {t: "The LORD is my rock and my fortress; whom shall I fear? (Psalm 27:1)", f: () => { sim.al+=5; sim.shepherdConvo++; logUpdate("You spoke faith."); }},
+                        {t: "We will fight them.", f: () => { sim.shepherdConvo++; }}
+                    ]);
+                } else if (sim.shepherdConvo === 2) {
+                    openDialogue("Head Shepherd", "Even the storms worry me. The winds howl fiercely at night.", [
+                        {t: "He calms the storm, so that its waves are still. (Psalm 107:29)", f: () => { sim.al+=5; sim.shepherdConvo++; logUpdate("You shared wisdom."); }},
+                        {t: "It is just weather.", f: () => { sim.shepherdConvo++; }}
+                    ]);
+                } else if (sim.shepherdConvo === 3) {
+                    openDialogue("Head Shepherd", "If we lose everything, what then?", [
+                        {t: "Naked I came from my mother's womb, and naked shall I return. (Job 1:21)", f: () => { sim.al+=10; sim.shepherdConvo++; logUpdate("You demonstrated ultimate faith."); }},
+                        {t: "Do not speak of such things.", f: () => { sim.shepherdConvo++; }}
+                    ]);
+                } else {
+                    openDialogue("Head Shepherd", "I will remember your words, my lord. YHWH is our true shepherd.", [
+                        {t: "Peace be with you.", f: () => {}}
+                    ]);
+                }
+            } else {
+                openDialogue(nearNpc.userData.label, "Yes, my lord Job?", [
+                    {t: "Command: Herd the animals.", f: () => { nearNpc.userData.task = 'HERD'; logUpdate(nearNpc.userData.label + " is securing the herds."); }},
+                    {t: "Nevermind.", f: () => {}}
+                ]);
+            }
+        } else {
+            logUpdate("No one is nearby to hear you.");
+        }
     }
     else if (sim.mode === 'STRUCK') {
         sim.round++;
