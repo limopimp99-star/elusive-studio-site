@@ -69,6 +69,10 @@ class ElusiveHeader extends HTMLElement {
                     border-radius: 4px; transition: 0.3s; background: rgba(239, 68, 68, 0.1);
                 }
                 .deploy-btn:hover { background: #ef4444; color: black !important; box-shadow: 0 0 15px #ef4444; }
+                
+                /* GAME LINK */
+                .game-link { color: #d4af37 !important; font-weight: 900 !important; }
+                .game-link:hover { color: #ffe55c !important; text-shadow: 0 0 15px rgba(212,175,55,0.8) !important; }
 
                 @media (max-width: 768px) { nav { display: none; } }
             </style>
@@ -76,6 +80,7 @@ class ElusiveHeader extends HTMLElement {
             <header id="main-header">
                 <a href="#" class="logo">ELUSIVE<span>STUDIO</span></a>
                 <nav>
+                    <a href="/uz-game/" target="_blank" class="game-link">THE PATIENCE OF UZ</a>
                     <a href="#services">Protocols</a>
                     <a href="#tools">Arsenal</a>
                     <a href="https://www.insta360.com/sal/x5?utm_source=AffiliateCenter&utm_medium=copylink&utm_term=INRVI5H" target="_blank" class="gear-link">GEAR</a>

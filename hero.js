@@ -48,15 +48,28 @@ class ElusiveHero extends HTMLElement {
                 }
                 
                 /* MAIN BUTTON STYLING */
+                .btn-group {
+                    display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;
+                }
+
                 .btn {
-                    padding: 1.2rem 3.5rem; background: #ef4444; color: white;
+                    padding: 1.2rem 3.5rem; background: #ef4444; color: white; display: inline-flex; align-items: center; justify-content: center;
                     text-decoration: none; border-radius: 50px; font-weight: 900; 
                     text-transform: uppercase; border: none; cursor: pointer;
                     box-shadow: 0 0 30px rgba(239, 68, 68, 0.6); transition: 0.3s;
                     animation: pulse-shadow 2s infinite;
                 }
                 .btn:hover { transform: scale(1.05); background: white; color: #ef4444; }
+                
+                .btn-gold {
+                    background: #d4af37; color: #000; 
+                    box-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
+                    animation: pulse-gold 2s infinite;
+                }
+                .btn-gold:hover { background: white; color: #aa7c11; }
+
                 @keyframes pulse-shadow { 0%, 100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.6); } 50% { box-shadow: 0 0 45px rgba(239, 68, 68, 1); } }
+                @keyframes pulse-gold { 0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.6); } 50% { box-shadow: 0 0 45px rgba(212, 175, 55, 1); } }
 
                 @media (max-width: 600px) { .plus { display: none; } }
             </style>
@@ -71,13 +84,16 @@ class ElusiveHero extends HTMLElement {
                     <h1 class="rainbow">Ignite your <br> social life</h1>
                     <p>We install the systems, legal structures, and strategies that allow high-level founders to scale without burnout.</p>
                     
-                    <button class="btn" 
-                        data-tally-open="Y5aXxB" 
-                        data-tally-layout="modal" 
-                        data-tally-emoji-text="👋" 
-                        data-tally-emoji-animation="wave">
-                        JOIN THE WAR ROOM
-                    </button>
+                    <div class="btn-group">
+                        <button class="btn" 
+                            data-tally-open="Y5aXxB" 
+                            data-tally-layout="modal" 
+                            data-tally-emoji-text="👋" 
+                            data-tally-emoji-animation="wave">
+                            JOIN THE WAR ROOM
+                        </button>
+                        <a href="/uz-game/" target="_blank" class="btn btn-gold">PLAY GAME</a>
+                    </div>
                 </div>
             </section>
         `;
