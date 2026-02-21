@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>THE PATIENCE OF UZ • Next-Gen Cinematic</title>
+    <title>THE PATIENCE OF UZ • by MrLive305</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=VT323&display=swap" rel="stylesheet">
     <style>
         :root { 
@@ -210,14 +210,19 @@ window.whirlwindGrp = null;
 window.typewriterInt = null;
 window.treeShaders = [];
 
-// MODEL CACHE FOR GITHUB URLs
-const modelCache = { sheep: null, camel: null, job: null, donkey: null, wolf: null, raider: null, house: null, cedar: null, bird: null, eliphaz: null, bildad: null, zophar: null, wife: null, servant: null, oxen: null, acacia: null };
+// EXTENDED MODEL CACHE 
+const modelCache = { 
+    sheep: null, camel: null, job: null, donkey: null, wolf: null, raider: null, house: null, cedar: null, 
+    bird: null, eliphaz: null, bildad: null, zophar: null, wife: null, servant: null, oxen: null, acacia: null,
+    temple: null, bird2: null, buildings: null, clouds: null, shrubs: null, oasis: null, oasis_desert: null, 
+    rainbow: null, sheep_enclosure: null, sun: null
+};
 const animMixers = [];
 
 // === LOD + INSTANCING SYSTEM ===
 let sheepInstances = null;
-const INSTANCED_COUNT = 80;  // up to 80 sheep as instances when far away
-const LOD_DISTANCE = 450;    // switch to low-detail at this distance
+const INSTANCED_COUNT = 80;
+const LOD_DISTANCE = 450;
 
 function vibrate(ms) { if(navigator.vibrate) navigator.vibrate(ms); }
 
@@ -331,6 +336,7 @@ async function preloadAndInit() {
     const txt = document.getElementById('loading-text');
     let loadedCount = 0;
     
+    // ✅ CORRECT LOCAL PATH - uses files from your own Netlify repo
     const baseURL = "./assets/";
     
     const modelsToLoad = [
@@ -343,13 +349,23 @@ async function preloadAndInit() {
         { name: 'house', path: baseURL + '1st_century_israelite_house.glb' },
         { name: 'cedar', path: baseURL + 'cedar_tree.glb' },
         { name: 'bird', path: baseURL + 'Bird.glb' },
+        { name: 'bird2', path: baseURL + 'Bird 2.glb' },
         { name: 'eliphaz', path: baseURL + 'friend1.glb' },
         { name: 'bildad', path: baseURL + 'friend2.glb' },
-        { name: 'zophar', path: baseURL + 'Friend3.glb' },
+        { name: 'zophar', path: baseURL + 'friend3-v1.glb' },
         { name: 'wife', path: baseURL + 'wife.glb' },
         { name: 'servant', path: baseURL + '_npc.glb' },
         { name: 'oxen', path: baseURL + 'oxen.glb' },
-        { name: 'acacia', path: baseURL + 'acacia_trees_free_low_poly.glb' }
+        { name: 'acacia', path: baseURL + 'acacia_trees_free_low_poly.glb' },
+        { name: 'temple', path: baseURL + 'ancient_temple.glb' },
+        { name: 'buildings', path: baseURL + 'buildings.glb' },
+        { name: 'clouds', path: baseURL + 'Clouds.glb' },
+        { name: 'shrubs', path: baseURL + 'desert_shrubs.glb' },
+        { name: 'oasis', path: baseURL + 'oasis.glb' },
+        { name: 'oasis_desert', path: baseURL + 'oasis_-_desert.glb' },
+        { name: 'rainbow', path: baseURL + 'Rainbow With Clouds.glb' },
+        { name: 'sheep_enclosure', path: baseURL + 'sheep_in_its_enclosure.glb' },
+        { name: 'sun', path: baseURL + 'Sun.glb' }
     ];
 
     const promises = modelsToLoad.map(m => {
@@ -358,18 +374,20 @@ async function preloadAndInit() {
                 modelCache[m.name] = gltf;
                 loadedCount++;
                 txt.innerText = `Loading Assets... (${loadedCount}/${modelsToLoad.length})`;
+                console.log(`✅ Loaded: ${m.name}`);
             })
             .catch(err => {
-                console.warn(`Could not load ${m.path}. Using PS1 fallback.`, err);
+                console.error(`❌ Failed to load ${m.name} → ${m.path}`, err);
                 modelCache[m.name] = null;
                 loadedCount++;
-                txt.innerText = `Loading Assets... (${loadedCount}/${modelsToLoad.length})`;
+                txt.innerText = `Loading... (${loadedCount}/${modelsToLoad.length}) - some missing`;
             });
     });
 
     await Promise.all(promises);
+    console.log("✅ All model loading finished");
     await initEngine();
-    setTimeout(() => { document.getElementById('fader').style.opacity = 0; }, 500);
+    setTimeout(() => { document.getElementById('fader').style.opacity = 0; }, 600);
 }
 
 async function initEngine() {
@@ -489,7 +507,7 @@ function buildMountSystem() {
     // DONKEY
     if (modelCache.donkey) {
         const dModel = SkeletonUtils.clone(modelCache.donkey.scene);
-        dModel.scale.set(15,15,15); // Adjust this scale if model is huge/tiny
+        dModel.scale.set(15,15,15); 
         const mixer = new THREE.AnimationMixer(dModel);
         if(modelCache.donkey.animations && modelCache.donkey.animations.length > 0) mixer.clipAction(modelCache.donkey.animations[0]).play();
         animMixers.push({mixer: mixer, obj: dModel, type: 'donkey'});
@@ -512,7 +530,7 @@ function buildMountSystem() {
     heroGrp.position.set(0,55,0);
     if (modelCache.job) {
         const jModel = SkeletonUtils.clone(modelCache.job.scene);
-        jModel.scale.set(15,15,15); // Adjust this scale if model is huge/tiny
+        jModel.scale.set(15,15,15); 
         const mixer = new THREE.AnimationMixer(jModel);
         if(modelCache.job.animations && modelCache.job.animations.length > 0) mixer.clipAction(modelCache.job.animations[0]).play();
         animMixers.push({mixer: mixer, obj: jModel, type: 'job'});
@@ -560,7 +578,7 @@ function spawnSheep() {
     }
 
     sGroup.position.set((Math.random()-0.5)*2000, 0, (Math.random()-0.5)*2000);
-    sGroup.userData = { ...sGroup.userData, type: 'sheep', isGLTF: isGLTF, secured:false, state: 'GRAZE', fear: 0, grazeTimer: 0, speed: 0, maxSpeed: 45, velocity: new THREE.Vector3(), targetDir: new THREE.Vector3(0,0,1), targetYaw: 0, baseY: 0, instanceIndex: -1 };
+    sGroup.userData = { type: 'sheep', isGLTF: isGLTF, secured:false, state: 'GRAZE', fear: 0, grazeTimer: 0, speed: 0, maxSpeed: 45, velocity: new THREE.Vector3(), targetDir: new THREE.Vector3(0,0,1), targetYaw: 0, baseY: 0, instanceIndex: -1 };
     scene.add(sGroup); flock.push(sGroup);
 }
 
@@ -596,7 +614,7 @@ function spawnCamel() {
 
     if (modelCache.camel) {
         const cModel = SkeletonUtils.clone(modelCache.camel.scene);
-        cModel.scale.set(18,18,18); // Adjust this scale if model is huge/tiny
+        cModel.scale.set(18,18,18); 
         const mixer = new THREE.AnimationMixer(cModel);
         if(modelCache.camel.animations && modelCache.camel.animations.length > 0) mixer.clipAction(modelCache.camel.animations[0]).play();
         animMixers.push({mixer: mixer, obj: cGroup, type: 'camel'});
@@ -616,7 +634,7 @@ function spawnCamel() {
     }
 
     cGroup.position.set(400 + Math.random()*400, 0, -600 + Math.random()*400);
-    cGroup.userData = { ...cGroup.userData, type: 'camel', isGLTF: isGLTF, secured:false, state: 'GRAZE', fear: 0, grazeTimer: 0, speed: 0, maxSpeed: 60, velocity: new THREE.Vector3(), targetDir: new THREE.Vector3(0,0,1), targetYaw: 0, legs: cLegs, baseY: 25 };
+    cGroup.userData = { type: 'camel', isGLTF: isGLTF, secured:false, state: 'GRAZE', fear: 0, grazeTimer: 0, speed: 0, maxSpeed: 60, velocity: new THREE.Vector3(), targetDir: new THREE.Vector3(0,0,1), targetYaw: 0, legs: cLegs, baseY: 25 };
     scene.add(cGroup); camelHerd.push(cGroup);
 }
 
@@ -624,7 +642,7 @@ function spawnBuild(x,z,txt,col,h,radius, modelName=null) {
     const g = new THREE.Group();
     if(modelName && modelCache[modelName]) {
         const m = SkeletonUtils.clone(modelCache[modelName].scene);
-        m.scale.set(10,10,10); // Adjust this scale if model is huge/tiny
+        m.scale.set(10,10,10); 
         g.add(m);
     } else {
         const b = new THREE.Mesh(new THREE.BoxGeometry(200, h, 200), pbrMat('#'+col.toString(16), 0.9));
@@ -635,7 +653,19 @@ function spawnBuild(x,z,txt,col,h,radius, modelName=null) {
 
 function createMapStuff() {
     spawnBuild(-450, -600, "Job's Grand Household", 0xe8b050, 190, 120, 'house');
-    spawnBuild(600, -850, "Sheep Fold", 0x8b5a2b, 80, 120);
+    
+    // Use sheep enclosure model if available
+    if(modelCache.sheep_enclosure) {
+        spawnBuild(600, -850, "Sheep Fold", 0x8b5a2b, 80, 120, 'sheep_enclosure');
+    } else {
+        const fold = new THREE.Group(); const fenceMat = pbrMat('#5d4037', 0.8);
+        for (let i=0; i<8; i++) {
+            const post = new THREE.Mesh(new THREE.BoxGeometry(6,35,6), fenceMat); post.position.set(-175 + i*50, 17, -100); fold.add(post);
+            const rail = new THREE.Mesh(new THREE.BoxGeometry(50,8,6), fenceMat); rail.position.set(-150 + i*50, 28, -100); fold.add(rail);
+        }
+        fold.position.set(600, 0, -850); scene.add(fold); tags.push({position: new THREE.Vector3(600, 50, -950), userData: {label: "Sheep Fold"}});
+    }
+
     spawnBuild(800, -400, "Camel Enclosure", 0xa67f52, 60, 150);
     
     const servants = [
@@ -646,7 +676,7 @@ function createMapStuff() {
         const g = new THREE.Group();
         if(modelCache[s.m]) {
             const m = SkeletonUtils.clone(modelCache[s.m].scene);
-            m.scale.set(10,10,10); // Adjust this scale
+            m.scale.set(10,10,10); 
             g.add(m);
         } else {
             const body = new THREE.Mesh(new THREE.BoxGeometry(16,30,16), pbrMat('#285c70')); body.position.y=15;
@@ -678,19 +708,41 @@ function createMapStuff() {
         window.treeShaders.push(shader);
     };
 
+    // Trees (mix of cedar and acacia)
     for(let i=0; i<30; i++) {
         const tGroup = new THREE.Group();
-        if (modelCache.cedar) {
-            const m = SkeletonUtils.clone(modelCache.cedar.scene);
-            m.scale.set(20,20,20); // Adjust this scale
+        const useAcacia = modelCache.acacia && Math.random() > 0.5;
+        
+        if (useAcacia) {
+            const m = SkeletonUtils.clone(modelCache.acacia.scene);
+            m.scale.set(20,20,20); 
             tGroup.add(m);
+            tGroup.userData = { type: 'wood', hp: 3, label: "Acacia Tree" };
+        } else if (modelCache.cedar) {
+            const m = SkeletonUtils.clone(modelCache.cedar.scene);
+            m.scale.set(20,20,20); 
+            tGroup.add(m);
+            tGroup.userData = { type: 'wood', hp: 3, label: "Cedar Tree" };
         } else {
             const trunk = new THREE.Mesh(new THREE.CylinderGeometry(4,6,40), pbrMat('#3d2723')); trunk.position.y = 20;
             const leaves = new THREE.Mesh(new THREE.DodecahedronGeometry(20, 0), treeMat); leaves.position.y = 45;
             tGroup.add(trunk, leaves);
+            tGroup.userData = { type: 'wood', hp: 3, label: "Cedar Tree" };
         }
         tGroup.position.set((Math.random()-0.5)*3000, 0, (Math.random()-0.5)*3000);
-        tGroup.userData = { type: 'wood', hp: 3, label: "Cedar Tree" }; scene.add(tGroup); trees.push(tGroup); harvestNodes.push(tGroup); colliders.push({pos: tGroup.position, radius: 10});
+        scene.add(tGroup); trees.push(tGroup); harvestNodes.push(tGroup); colliders.push({pos: tGroup.position, radius: 10});
+    }
+    
+    // Desert Shrubs
+    if(modelCache.shrubs) {
+        for(let i=0; i<20; i++) {
+            const shGrp = new THREE.Group();
+            const m = SkeletonUtils.clone(modelCache.shrubs.scene);
+            m.scale.set(10,10,10);
+            shGrp.add(m);
+            shGrp.position.set((Math.random()-0.5)*3000, 0, (Math.random()-0.5)*3000);
+            scene.add(shGrp);
+        }
     }
 
     // Spawn some oxens
@@ -698,7 +750,7 @@ function createMapStuff() {
         const oGroup = new THREE.Group();
         if (modelCache.oxen) {
             const m = SkeletonUtils.clone(modelCache.oxen.scene);
-            m.scale.set(12,12,12); // Adjust this scale
+            m.scale.set(12,12,12); 
             const mixer = new THREE.AnimationMixer(m);
             if(modelCache.oxen.animations && modelCache.oxen.animations.length > 0) mixer.clipAction(modelCache.oxen.animations[0]).play();
             animMixers.push({mixer: mixer, obj: oGroup});
@@ -709,18 +761,21 @@ function createMapStuff() {
         }
         oGroup.position.set((Math.random()-0.5)*1500 - 500, 0, (Math.random()-0.5)*1500 - 500);
         oGroup.userData = { type: 'oxen', secured:false, state: 'GRAZE', fear: 0, grazeTimer: 0, speed: 0, maxSpeed: 30, velocity: new THREE.Vector3(), targetDir: new THREE.Vector3(0,0,1), targetYaw: 0, isGLTF: !!modelCache.oxen };
-        scene.add(oGroup); camelHerd.push(oGroup); // Add to same physics array for simplicity
+        scene.add(oGroup); camelHerd.push(oGroup); 
     }
 }
 
 function spawnVultures() {
     for(let i=0; i<6; i++) {
         const bird = new THREE.Group(); 
-        if (modelCache.bird) {
-            const m = SkeletonUtils.clone(modelCache.bird.scene);
-            m.scale.set(5,5,5); // Adjust this scale
+        const useBird2 = modelCache.bird2 && Math.random() > 0.5;
+        const bModelData = useBird2 ? modelCache.bird2 : modelCache.bird;
+
+        if (bModelData) {
+            const m = SkeletonUtils.clone(bModelData.scene);
+            m.scale.set(5,5,5); 
             const mixer = new THREE.AnimationMixer(m);
-            if(modelCache.bird.animations && modelCache.bird.animations.length > 0) mixer.clipAction(modelCache.bird.animations[0]).play();
+            if(bModelData.animations && bModelData.animations.length > 0) mixer.clipAction(bModelData.animations[0]).play();
             animMixers.push({mixer: mixer, obj: bird});
             bird.add(m);
             bird.userData.isGLTF = true;
@@ -741,7 +796,7 @@ function spawnWolf(x,z){
     const wolf = new THREE.Group(); 
     if(modelCache.wolf) {
         const m = SkeletonUtils.clone(modelCache.wolf.scene);
-        m.scale.set(10,10,10); // Adjust this scale
+        m.scale.set(10,10,10); 
         const mixer = new THREE.AnimationMixer(m);
         if(modelCache.wolf.animations && modelCache.wolf.animations.length > 0) mixer.clipAction(modelCache.wolf.animations[0]).play();
         animMixers.push({mixer: mixer, obj: wolf});
@@ -757,7 +812,7 @@ function createRaiderMesh(x, z) {
     const rGroup = new THREE.Group();
     if(modelCache.raider) {
         const m = SkeletonUtils.clone(modelCache.raider.scene);
-        m.scale.set(10,10,10); // Adjust this scale
+        m.scale.set(10,10,10); 
         const mixer = new THREE.AnimationMixer(m);
         if(modelCache.raider.animations && modelCache.raider.animations.length > 0) mixer.clipAction(modelCache.raider.animations[0]).play();
         animMixers.push({mixer: mixer, obj: rGroup});
@@ -775,10 +830,15 @@ function spawnVillageDetail() {
         const type = props[Math.floor(Math.random() * props.length)];
         const x = (Math.random() - 0.5) * 3500; const z = (Math.random() - 0.5) * 3500;
         if(Math.hypot(x, z) < 300 || Math.abs(x) < 100 || Math.abs(z) < 100) continue;
-        const group = new THREE.Group(); const mesh = new THREE.Mesh(new THREE.BoxGeometry(type.w, type.h, type.w), pbrMat(type.color));
-        mesh.position.y = type.h/2; group.add(mesh); group.position.set(x, 0, z);
-        if(Math.random() > 0.8) { group.userData = { label: type.name }; tags.push(group); }
-        scene.add(group); colliders.push({pos: new THREE.Vector3(x,0,z), radius: type.w/2});
+        
+        if (modelCache.buildings && Math.random() > 0.5) {
+            spawnBuild(x, z, type.name, type.color, type.h, type.w/2, 'buildings');
+        } else {
+            const group = new THREE.Group(); const mesh = new THREE.Mesh(new THREE.BoxGeometry(type.w, type.h, type.w), pbrMat(type.color));
+            mesh.position.y = type.h/2; group.add(mesh); group.position.set(x, 0, z);
+            if(Math.random() > 0.8) { group.userData = { label: type.name }; tags.push(group); }
+            scene.add(group); colliders.push({pos: new THREE.Vector3(x,0,z), radius: type.w/2});
+        }
     }
 }
 
@@ -906,7 +966,7 @@ function updateAnimalAI(anim, dt, time, flockArr, penTarget) {
         if (Math.random() < 0.02 && data.type === 'sheep') sfx.sheep();
         let awayVec = anim.position.clone().sub(pushSource).normalize(); let penVec = penTarget.clone().sub(anim.position).normalize();
         desiredVelocity.copy(awayVec).multiplyScalar(0.4).add(penVec.multiplyScalar(0.6)).normalize();
-        if (distToPen < 200) { data.secured = true; logUpdate((data.type === 'sheep' ? "Sheep" : (data.type === 'camel' ? "Camel" : "Oxen")) + " guided to fold."); }
+        if (distToPen < 200) { data.secured = true; logUpdate((data.type === 'sheep' ? "Sheep" : (data.type === 'camel' ? "Camel" : "Oxen")) + " guided to fold."); animateCounter(data.type === 'sheep' ? 'v-s' : 'v-c'); }
     } else if (data.state === 'GRAZE') {
         targetSpeed = data.maxSpeed * 0.2; data.grazeTimer -= dt;
         if (data.grazeTimer <= 0) { data.grazeTimer = 2 + Math.random() * 4; data.targetDir.set((Math.random() - 0.5), 0, (Math.random() - 0.5)).normalize(); if(Math.random() < 0.4) targetSpeed = 0; }
@@ -1258,9 +1318,15 @@ function buildAltar() {
         logUpdate("Sacred Altar built.");
         
         const altarGrp = new THREE.Group();
-        const base = new THREE.Mesh(new THREE.BoxGeometry(40, 20, 40), pbrMat('#aaaaaa', 0.9)); base.position.y = 10;
-        const top = new THREE.Mesh(new THREE.BoxGeometry(30, 10, 30), pbrMat('#888888', 0.9)); top.position.y = 25;
-        altarGrp.add(base, top);
+        if (modelCache.temple) {
+            const m = SkeletonUtils.clone(modelCache.temple.scene);
+            m.scale.set(5, 5, 5); 
+            altarGrp.add(m);
+        } else {
+            const base = new THREE.Mesh(new THREE.BoxGeometry(40, 20, 40), pbrMat('#aaaaaa', 0.9)); base.position.y = 10;
+            const top = new THREE.Mesh(new THREE.BoxGeometry(30, 10, 30), pbrMat('#888888', 0.9)); top.position.y = 25;
+            altarGrp.add(base, top);
+        }
         
         const spawnPos = player.position.clone().add(new THREE.Vector3(Math.sin(player.rotation.y)*80, 0, Math.cos(player.rotation.y)*80));
         spawnPos.y = getTerrainHeight(spawnPos.x, spawnPos.z);
@@ -1431,7 +1497,6 @@ function triggerCalamityWaves() {
     isDisasterRunning = true; sim.ritual = true; sfx.danger();
     document.getElementById('fader').style.opacity = "0.6"; document.getElementById('fader').style.background = "radial-gradient(circle, transparent 20%, #4a1e1e 100%)";
     
-    // Day 3 FIX applied
     const w4 = () => { 
         openDialogue("Messenger 4", "A great wind struck the house—your children are gone, Job.", [ 
             {
