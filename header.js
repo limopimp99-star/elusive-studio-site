@@ -80,7 +80,7 @@ class ElusiveHeader extends HTMLElement {
             <header id="main-header">
                 <a href="#" class="logo">ELUSIVE<span>STUDIO</span></a>
                 <nav>
-                    <a href="/uz-game/" target="_blank" class="game-link">THE PATIENCE OF UZ</a>
+                    <a href="/uz-game/genie.html" target="_blank" class="game-link">THE PATIENCE OF UZ</a>
                     <a href="#services">Protocols</a>
                     <a href="#tools">Arsenal</a>
                     <a href="https://www.insta360.com/sal/x5?utm_source=AffiliateCenter&utm_medium=copylink&utm_term=INRVI5H" target="_blank" class="gear-link">GEAR</a>

@@ -92,7 +92,7 @@ class ElusiveHero extends HTMLElement {
                             data-tally-emoji-animation="wave">
                             JOIN THE WAR ROOM
                         </button>
-                        <a href="/uz-game/" target="_blank" class="btn btn-gold">PLAY GAME</a>
+                        <a href="/uz-game/genie.html" target="_blank" class="btn btn-gold">PLAY GAME</a>
                     </div>
                 </div>
             </section>
