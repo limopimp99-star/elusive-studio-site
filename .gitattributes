@@ -1,2 +1,2 @@
-*.glb filter=lfs diff=lfs merge=lfs -text
+"uz-game/assets/*.glb filter=lfs diff=lfs merge=lfs -text" 
 uz-game/assets/*.glb filter=lfs diff=lfs merge=lfs -text
