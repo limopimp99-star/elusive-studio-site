@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>THE PATIENCE OF UZ • by MrLive305</title>
+    <title>THE PATIENCE OF UZ • Cinematic Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=VT323&display=swap" rel="stylesheet">
     <style>
         :root { 
@@ -210,7 +210,7 @@ window.whirlwindGrp = null;
 window.typewriterInt = null;
 window.treeShaders = [];
 
-// EXTENDED MODEL CACHE 
+// EXTENDED MODEL CACHE FOR NETLIFY LOCAL ASSETS
 const modelCache = { 
     sheep: null, camel: null, job: null, donkey: null, wolf: null, raider: null, house: null, cedar: null, 
     bird: null, eliphaz: null, bildad: null, zophar: null, wife: null, servant: null, oxen: null, acacia: null,
@@ -340,32 +340,32 @@ async function preloadAndInit() {
     const baseURL = "./assets/";
     
     const modelsToLoad = [
-        { name: 'sheep', path: baseURL + 'sheep.glb' },
-        { name: 'camel', path: baseURL + 'camel.glb' },
-        { name: 'job', path: baseURL + 'shepherd.glb' },
-        { name: 'donkey', path: baseURL + 'donkey_3d_model_free_download.glb' },
-        { name: 'wolf', path: baseURL + 'wolf_with_rigged_and_animation.glb' },
-        { name: 'raider', path: baseURL + 'raider.glb' },
-        { name: 'house', path: baseURL + '1st_century_israelite_house.glb' },
-        { name: 'cedar', path: baseURL + 'cedar_tree.glb' },
-        { name: 'bird', path: baseURL + 'Bird.glb' },
-        { name: 'bird2', path: baseURL + 'Bird 2.glb' },
-        { name: 'eliphaz', path: baseURL + 'friend1.glb' },
-        { name: 'bildad', path: baseURL + 'friend2.glb' },
-        { name: 'zophar', path: baseURL + 'friend3-v1.glb' },
-        { name: 'wife', path: baseURL + 'wife.glb' },
-        { name: 'servant', path: baseURL + '_npc.glb' },
-        { name: 'oxen', path: baseURL + 'oxen.glb' },
-        { name: 'acacia', path: baseURL + 'acacia_trees_free_low_poly.glb' },
-        { name: 'temple', path: baseURL + 'ancient_temple.glb' },
-        { name: 'buildings', path: baseURL + 'buildings.glb' },
-        { name: 'clouds', path: baseURL + 'Clouds.glb' },
-        { name: 'shrubs', path: baseURL + 'desert_shrubs.glb' },
-        { name: 'oasis', path: baseURL + 'oasis.glb' },
-        { name: 'oasis_desert', path: baseURL + 'oasis_-_desert.glb' },
-        { name: 'rainbow', path: baseURL + 'Rainbow With Clouds.glb' },
+        { name: 'sheep',           path: baseURL + 'sheep.glb' },
+        { name: 'camel',           path: baseURL + 'camel.glb' },
+        { name: 'job',             path: baseURL + 'shepherd.glb' },
+        { name: 'donkey',          path: baseURL + 'donkey_3d_model_free_download.glb' },
+        { name: 'wolf',            path: baseURL + 'wolf_with_rigged_and_animation.glb' },
+        { name: 'raider',          path: baseURL + 'raider.glb' },
+        { name: 'house',           path: baseURL + '1st_century_israelite_house.glb' },
+        { name: 'cedar',           path: baseURL + 'cedar_tree.glb' },
+        { name: 'bird',            path: baseURL + 'Bird.glb' },
+        { name: 'bird2',           path: baseURL + 'Bird2.glb' },
+        { name: 'eliphaz',         path: baseURL + 'friend1.glb' },
+        { name: 'bildad',          path: baseURL + 'friend2.glb' },
+        { name: 'zophar',          path: baseURL + 'friend3-v1.glb' },
+        { name: 'wife',            path: baseURL + 'wife.glb' },
+        { name: 'servant',         path: baseURL + '_npc.glb' },
+        { name: 'oxen',            path: baseURL + 'oxen.glb' },
+        { name: 'acacia',          path: baseURL + 'acacia_trees_free_low_poly.glb' },
+        { name: 'temple',          path: baseURL + 'ancient_temple.glb' },
+        { name: 'buildings',       path: baseURL + 'buildings.glb' },
+        { name: 'clouds',          path: baseURL + 'Clouds.glb' },
+        { name: 'shrubs',          path: baseURL + 'desert_shrubs.glb' },
+        { name: 'oasis',           path: baseURL + 'oasis.glb' },
+        { name: 'oasis_desert',    path: baseURL + 'oasis_-_desert.glb' },
+        { name: 'rainbow',         path: baseURL + 'RainbowWithClouds.glb' },
         { name: 'sheep_enclosure', path: baseURL + 'sheep_in_its_enclosure.glb' },
-        { name: 'sun', path: baseURL + 'Sun.glb' }
+        { name: 'sun',             path: baseURL + 'Sun.glb' }
     ];
 
     const promises = modelsToLoad.map(m => {
@@ -654,7 +654,6 @@ function spawnBuild(x,z,txt,col,h,radius, modelName=null) {
 function createMapStuff() {
     spawnBuild(-450, -600, "Job's Grand Household", 0xe8b050, 190, 120, 'house');
     
-    // Use sheep enclosure model if available
     if(modelCache.sheep_enclosure) {
         spawnBuild(600, -850, "Sheep Fold", 0x8b5a2b, 80, 120, 'sheep_enclosure');
     } else {
@@ -694,7 +693,6 @@ function createMapStuff() {
         grain.userData = { type: 'grain', hp: 1, label: "Wheat Field" }; scene.add(grain); harvestNodes.push(grain); tags.push(grain);
     }
 
-    // Advanced Vertex Shader Wind Material
     window.treeShaders = [];
     const treeMat = pbrMat('#2d4a2d', 0.8);
     treeMat.onBeforeCompile = shader => {
@@ -708,7 +706,6 @@ function createMapStuff() {
         window.treeShaders.push(shader);
     };
 
-    // Trees (mix of cedar and acacia)
     for(let i=0; i<30; i++) {
         const tGroup = new THREE.Group();
         const useAcacia = modelCache.acacia && Math.random() > 0.5;
@@ -733,7 +730,6 @@ function createMapStuff() {
         scene.add(tGroup); trees.push(tGroup); harvestNodes.push(tGroup); colliders.push({pos: tGroup.position, radius: 10});
     }
     
-    // Desert Shrubs
     if(modelCache.shrubs) {
         for(let i=0; i<20; i++) {
             const shGrp = new THREE.Group();
@@ -745,7 +741,6 @@ function createMapStuff() {
         }
     }
 
-    // Spawn some oxens
     for(let i=0; i<6; i++) {
         const oGroup = new THREE.Group();
         if (modelCache.oxen) {
@@ -966,7 +961,7 @@ function updateAnimalAI(anim, dt, time, flockArr, penTarget) {
         if (Math.random() < 0.02 && data.type === 'sheep') sfx.sheep();
         let awayVec = anim.position.clone().sub(pushSource).normalize(); let penVec = penTarget.clone().sub(anim.position).normalize();
         desiredVelocity.copy(awayVec).multiplyScalar(0.4).add(penVec.multiplyScalar(0.6)).normalize();
-        if (distToPen < 200) { data.secured = true; logUpdate((data.type === 'sheep' ? "Sheep" : (data.type === 'camel' ? "Camel" : "Oxen")) + " guided to fold."); animateCounter(data.type === 'sheep' ? 'v-s' : 'v-c'); }
+        if (distToPen < 200) { data.secured = true; logUpdate((data.type === 'sheep' ? "Sheep" : (data.type === 'camel' ? "Camel" : "Oxen")) + " guided to fold."); }
     } else if (data.state === 'GRAZE') {
         targetSpeed = data.maxSpeed * 0.2; data.grazeTimer -= dt;
         if (data.grazeTimer <= 0) { data.grazeTimer = 2 + Math.random() * 4; data.targetDir.set((Math.random() - 0.5), 0, (Math.random() - 0.5)).normalize(); if(Math.random() < 0.4) targetSpeed = 0; }
@@ -1171,7 +1166,6 @@ async function mainLoop() {
             player.rotation.y = lerpAngle(player.rotation.y, targetRot, dt * 10);
             handleCollisions();
             
-            // Dust kick-up when moving fast
             if (pSpeed > 200 && Math.random() < 0.1) {
                 spawnImpactVFX(new THREE.Vector3(player.position.x, player.position.y - 10, player.position.z), 0xddaa77, true);
             }
@@ -1200,9 +1194,6 @@ async function mainLoop() {
         let pSheep = 0, pCamel = 0;
         flock.forEach(s => { if(player.position.distanceTo(s.position) < 1500) updateAnimalAI(s, dt, time, flock, sheepPenTarget); if(s.userData.secured) pSheep++; });
         camelHerd.forEach(c => { if(player.position.distanceTo(c.position) < 1500) updateAnimalAI(c, dt, time, camelHerd, camelPenTarget); if(c.userData.secured) pCamel++; });
-        
-        if (sim.sheep > 0 && pSheep !== parseInt(document.getElementById('v-s').innerText)) animateCounter('v-s');
-        if (sim.camels > 0 && pCamel !== parseInt(document.getElementById('v-c').innerText)) animateCounter('v-c');
         
         document.getElementById('v-s').innerText = sim.sheep === 0 ? 0 : sim.sheep - 16 + pSheep;
         document.getElementById('v-c').innerText = sim.camels === 0 ? 0 : sim.camels - 5 + pCamel;
