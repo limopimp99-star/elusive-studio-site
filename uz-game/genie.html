@@ -332,13 +332,12 @@ async function preloadAndInit() {
     
     const baseURL = "https://pub-b4f35fb4e5964fd1a9aed3bf67bcd7a4.r2.dev/";
     
-    // UPDATED WITH CORRECT SPACING AND NEW JOB MODEL
+    // UPDATED WITH EXACT FILENAMES
     const modelsToLoad = [
         { name: 'sheep',           path: baseURL + 'sheep.glb' },
         { name: 'camel',           path: baseURL + 'camel.glb' },
-        { name: 'job',             path: baseURL + 'shepherd2.glb' }, // Renamed from shepherd (2).glb
-        { name: 'npc_shepherd',    path: baseURL + 'shepherd.glb' },
-        { name: 'donkey',          path: baseURL + 'donkey_3d_model_free_download.glb' },
+        { name: 'job',             path: baseURL + 'shepherd(2).glb' },
+        { name: 'donkey',          path: baseURL + 'realistic_donkey__burro_3d_model.glb' },
         { name: 'wolf',            path: baseURL + 'wolf_with_rigged_and_animation.glb' },
         { name: 'raider',          path: baseURL + 'raider.glb' },
         { name: 'house',           path: baseURL + '1st_century_israelite_house.glb' },
@@ -360,7 +359,8 @@ async function preloadAndInit() {
         { name: 'oasis_desert',    path: baseURL + 'oasis_-_desert.glb' },
         { name: 'rainbow',         path: baseURL + 'RainbowWithClouds.glb' },
         { name: 'sheep_enclosure', path: baseURL + 'sheep_in_its_enclosure.glb' },
-        { name: 'sun',             path: baseURL + 'Sun.glb' }
+        { name: 'sun',             path: baseURL + 'Sun.glb' },
+        { name: 'npc_shepherd',    path: baseURL + 'shepherd.glb' }
     ];
 
     const promises = modelsToLoad.map(m => {
@@ -469,6 +469,22 @@ async function initEngine() {
 
     buildMountSystem(); createMapStuff(); setupMobileControls(); spawnVillageDetail(); spawnVultures(); scene.traverse(enableShadows);
     
+    // Add Sun and Clouds High Up
+    if (modelCache.sun) {
+        const sunModel = SkeletonUtils.clone(modelCache.sun.scene);
+        sunModel.scale.set(100, 100, 100);
+        sunModel.position.set(300, 1500, -1000);
+        scene.add(sunModel);
+    }
+    if (modelCache.clouds) {
+        for(let i=0; i<10; i++) {
+            const cloud = SkeletonUtils.clone(modelCache.clouds.scene);
+            cloud.scale.set(50, 50, 50);
+            cloud.position.set((Math.random()-0.5)*4000, 800 + Math.random()*400, (Math.random()-0.5)*4000);
+            scene.add(cloud);
+        }
+    }
+
     window.onkeydown=e=>{ keys[e.key.toLowerCase()]=true; if(e.code === 'Space') attemptRitualStrike(); if(e.code === 'Space' && !sim.ritual) executeStaffStrike(); };
     window.onkeyup=e=>keys[e.key.toLowerCase()]=false;
     view.onmousemove=e=>{ if(document.pointerLockElement) camYaw -= e.movementX*0.0035; };
@@ -491,7 +507,8 @@ function buildMountSystem() {
     /* FIXED SCALE: Donkey */
     if (modelCache.donkey) {
         const dModel = SkeletonUtils.clone(modelCache.donkey.scene);
-        dModel.scale.set(35, 35, 35); 
+        dModel.scale.set(3.5, 3.5, 3.5); 
+        dModel.position.y = 0.5;
         const mixer = new THREE.AnimationMixer(dModel);
         if(modelCache.donkey.animations && modelCache.donkey.animations.length > 0) mixer.clipAction(modelCache.donkey.animations[0]).play();
         animMixers.push({mixer: mixer, obj: dModel, type: 'donkey'});
@@ -514,7 +531,9 @@ function buildMountSystem() {
     heroGrp.position.set(0,55,0);
     if (modelCache.job) {
         const jModel = SkeletonUtils.clone(modelCache.job.scene);
-        jModel.scale.set(45, 45, 45); 
+        jModel.scale.set(2.8, 2.8, 2.8); 
+        jModel.position.y = 0.5;
+        jModel.position.z = 0.3;
         const mixer = new THREE.AnimationMixer(jModel);
         if(modelCache.job.animations && modelCache.job.animations.length > 0) mixer.clipAction(modelCache.job.animations[0]).play();
         animMixers.push({mixer: mixer, obj: jModel, type: 'job'});
@@ -550,7 +569,7 @@ function spawnSheep() {
     
     if (modelCache.sheep) {
         const sModel = SkeletonUtils.clone(modelCache.sheep.scene);
-        sModel.scale.set(1.5, 1.5, 1.5);
+        sModel.scale.set(1.2, 1.2, 1.2);
         const mixer = new THREE.AnimationMixer(sModel);
         if (modelCache.sheep.animations && modelCache.sheep.animations.length) mixer.clipAction(modelCache.sheep.animations[0]).play();
         animMixers.push({mixer, obj: sGroup, type: 'sheep'});
@@ -575,7 +594,7 @@ function updateInstancedFlock() {
             const matrix = new THREE.Matrix4();
             matrix.makeRotationY(s.rotation.y);
             matrix.setPosition(s.position);
-            matrix.scale(new THREE.Vector3(1.5, 1.5, 1.5));
+            matrix.scale(new THREE.Vector3(1.2, 1.2, 1.2));
             sheepInstances.setMatrixAt(idx, matrix);
             s.visible = false;
             s.userData.instanceIndex = idx;
@@ -600,7 +619,7 @@ function spawnCamel() {
 
     if (modelCache.camel) {
         const cModel = SkeletonUtils.clone(modelCache.camel.scene);
-        cModel.scale.set(2.5, 2.5, 2.5); 
+        cModel.scale.set(1.5, 1.5, 1.5); 
         const mixer = new THREE.AnimationMixer(cModel);
         if(modelCache.camel.animations && modelCache.camel.animations.length > 0) mixer.clipAction(modelCache.camel.animations[0]).play();
         animMixers.push({mixer: mixer, obj: cGroup, type: 'camel'});
@@ -624,11 +643,11 @@ function spawnCamel() {
     scene.add(cGroup); camelHerd.push(cGroup);
 }
 
-function spawnBuild(x,z,txt,col,h,radius, modelName=null) {
+function spawnBuild(x,z,txt,col,h,radius, modelName=null, modelScale=10) {
     const g = new THREE.Group();
     if(modelName && modelCache[modelName]) {
         const m = SkeletonUtils.clone(modelCache[modelName].scene);
-        m.scale.set(30, 30, 30); 
+        m.scale.set(modelScale, modelScale, modelScale); 
         g.add(m);
     } else {
         const b = new THREE.Mesh(new THREE.BoxGeometry(200, h, 200), pbrMat('#'+col.toString(16), 0.9));
@@ -638,10 +657,10 @@ function spawnBuild(x,z,txt,col,h,radius, modelName=null) {
 }
 
 function createMapStuff() {
-    spawnBuild(-450, -600, "Job's Grand Household", 0xe8b050, 190, 120, 'house');
+    spawnBuild(-450, -600, "Job's Grand Household", 0xe8b050, 190, 120, 'house', 10);
     
     if(modelCache.sheep_enclosure) {
-        spawnBuild(600, -850, "Sheep Fold", 0x8b5a2b, 80, 120, 'sheep_enclosure');
+        spawnBuild(600, -850, "Sheep Fold", 0x8b5a2b, 80, 120, 'sheep_enclosure', 8);
     } else {
         const fold = new THREE.Group(); const fenceMat = pbrMat('#5d4037', 0.8);
         for (let i=0; i<8; i++) {
@@ -655,16 +674,16 @@ function createMapStuff() {
     
     // NPCs including NEW SHEPHERD LOGIC
     const servants = [
-        {n:"Steward Eli", m:"servant", x:-200, z:-100, task: 'IDLE'}, 
-        {n:"Leah", m:"wife", x:100, z:100, task: 'IDLE'},
-        {n:"Head Shepherd", m:"npc_shepherd", x:600, z:-800, task: 'STATIC'} // Will trigger 5-part dialogue
+        {n:"Steward Eli", m:"servant", x:-200, z:-100, task: 'IDLE', s: 2.8}, 
+        {n:"Leah", m:"wife", x:100, z:100, task: 'IDLE', s: 2.8},
+        {n:"Head Shepherd", m:"npc_shepherd", x:600, z:-800, task: 'STATIC', s: 3.5} 
     ];
 
     servants.forEach(s=>{
         const g = new THREE.Group();
         if(modelCache[s.m]) {
             const m = SkeletonUtils.clone(modelCache[s.m].scene);
-            m.scale.set(40, 40, 40); // MATCH JOB SCALE
+            m.scale.set(s.s, s.s, s.s);
             g.add(m);
         } else {
             const body = new THREE.Mesh(new THREE.BoxGeometry(16,30,16), pbrMat('#285c70')); body.position.y=15;
@@ -703,12 +722,12 @@ function createMapStuff() {
         
         if (useAcacia) {
             const m = SkeletonUtils.clone(modelCache.acacia.scene);
-            m.scale.set(3, 3, 3); 
+            m.scale.set(1.0, 1.0, 1.0); 
             tGroup.add(m);
             tGroup.userData = { type: 'wood', hp: 3, label: "Acacia Tree" };
         } else if (modelCache.cedar) {
             const m = SkeletonUtils.clone(modelCache.cedar.scene);
-            m.scale.set(3, 3, 3); 
+            m.scale.set(1.0, 1.0, 1.0); 
             tGroup.add(m);
             tGroup.userData = { type: 'wood', hp: 3, label: "Cedar Tree" };
         } else {
@@ -725,7 +744,7 @@ function createMapStuff() {
         for(let i=0; i<20; i++) {
             const shGrp = new THREE.Group();
             const m = SkeletonUtils.clone(modelCache.shrubs.scene);
-            m.scale.set(2, 2, 2);
+            m.scale.set(0.8, 0.8, 0.8);
             shGrp.add(m);
             shGrp.position.set((Math.random()-0.5)*3000, 0, (Math.random()-0.5)*3000);
             scene.add(shGrp);
@@ -737,7 +756,7 @@ function createMapStuff() {
         const oGroup = new THREE.Group();
         if (modelCache.oxen) {
             const m = SkeletonUtils.clone(modelCache.oxen.scene);
-            m.scale.set(5, 5, 5); 
+            m.scale.set(1.5, 1.5, 1.5); 
             const mixer = new THREE.AnimationMixer(m);
             if(modelCache.oxen.animations && modelCache.oxen.animations.length > 0) mixer.clipAction(modelCache.oxen.animations[0]).play();
             animMixers.push({mixer: mixer, obj: oGroup});
@@ -760,7 +779,7 @@ function spawnVultures() {
 
         if (bModelData) {
             const m = SkeletonUtils.clone(bModelData.scene);
-            m.scale.set(5,5,5); 
+            m.scale.set(1.5, 1.5, 1.5); 
             const mixer = new THREE.AnimationMixer(m);
             if(bModelData.animations && bModelData.animations.length > 0) mixer.clipAction(bModelData.animations[0]).play();
             animMixers.push({mixer: mixer, obj: bird});
@@ -783,7 +802,7 @@ function spawnWolf(x,z){
     const wolf = new THREE.Group(); 
     if(modelCache.wolf) {
         const m = SkeletonUtils.clone(modelCache.wolf.scene);
-        m.scale.set(8, 8, 8); 
+        m.scale.set(1.5, 1.5, 1.5); 
         const mixer = new THREE.AnimationMixer(m);
         if(modelCache.wolf.animations && modelCache.wolf.animations.length > 0) mixer.clipAction(modelCache.wolf.animations[0]).play();
         animMixers.push({mixer: mixer, obj: wolf});
@@ -799,7 +818,7 @@ function createRaiderMesh(x, z) {
     const rGroup = new THREE.Group();
     if(modelCache.raider) {
         const m = SkeletonUtils.clone(modelCache.raider.scene);
-        m.scale.set(10,10,10); 
+        m.scale.set(2.8, 2.8, 2.8); 
         const mixer = new THREE.AnimationMixer(m);
         if(modelCache.raider.animations && modelCache.raider.animations.length > 0) mixer.clipAction(modelCache.raider.animations[0]).play();
         animMixers.push({mixer: mixer, obj: rGroup});
@@ -819,7 +838,7 @@ function spawnVillageDetail() {
         if(Math.hypot(x, z) < 300 || Math.abs(x) < 100 || Math.abs(z) < 100) continue;
         
         if (modelCache.buildings && Math.random() > 0.5) {
-            spawnBuild(x, z, type.name, type.color, type.h, type.w/2, 'buildings');
+            spawnBuild(x, z, type.name, type.color, type.h, type.w/2, 'buildings', 5);
         } else {
             const group = new THREE.Group(); const mesh = new THREE.Mesh(new THREE.BoxGeometry(type.w, type.h, type.w), pbrMat(type.color));
             mesh.position.y = type.h/2; group.add(mesh); group.position.set(x, 0, z);
@@ -928,6 +947,20 @@ function spawnImpactVFX(pos, color = 0xffffff, isDust = false) {
     }, 20);
 }
 
+// LOD Distance based Model Scaling
+function updateModelScales() {
+    const playerPos = player.position;
+    [flock, camelHerd, trees].flat().forEach(obj => {
+        if(!obj) return;
+        const dist = playerPos.distanceTo(obj.position);
+        let scale = 1.0;
+        if (dist > 500) scale = 0.6;
+        else if (dist > 200) scale = 0.8;
+        else scale = 1.0;
+        obj.scale.set(scale, scale, scale);
+    });
+}
+
 /** ==========================================
  * PS1 ANIMAL AI ENGINE (HERDING)
  * ========================================== */
@@ -1008,9 +1041,10 @@ async function mainLoop() {
     const dt = Math.min(clock.getDelta(), 0.1); 
     const time = Date.now() * 0.005;
 
-    // Update GLTF Animations
+    // Update GLTF Animations & Scaling
     animMixers.forEach(m => m.mixer.update(dt));
     updateInstancedFlock();
+    updateModelScales();
 
     if(window.treeShaders) window.treeShaders.forEach(s => s.uniforms.time.value = time);
     if(waterMat) waterMat.uniforms.time.value += dt;
@@ -1195,9 +1229,6 @@ async function mainLoop() {
         let pSheep = 0, pCamel = 0;
         flock.forEach(s => { if(player.position.distanceTo(s.position) < 1500) updateAnimalAI(s, dt, time, flock, sheepPenTarget); if(s.userData.secured) pSheep++; });
         camelHerd.forEach(c => { if(player.position.distanceTo(c.position) < 1500) updateAnimalAI(c, dt, time, camelHerd, camelPenTarget); if(c.userData.secured) pCamel++; });
-        
-        if (sim.sheep > 0 && pSheep !== parseInt(document.getElementById('v-s').innerText)) animateCounter('v-s');
-        if (sim.camels > 0 && pCamel !== parseInt(document.getElementById('v-c').innerText)) animateCounter('v-c');
         
         document.getElementById('v-s').innerText = sim.sheep === 0 ? 0 : sim.sheep - 16 + pSheep;
         document.getElementById('v-c').innerText = sim.camels === 0 ? 0 : sim.camels - 5 + pCamel;
@@ -1392,7 +1423,6 @@ function npcInteraction() {
         const nearNpc = npcs.find(n => player.position.distanceTo(n.position) < 150);
         
         if(nearNpc) {
-            // NEW HEAD SHEPHERD LOGIC WITH SCRIPTURE
             if (nearNpc.userData.label === "Head Shepherd") {
                 if (sim.shepherdConvo === 0) {
                     openDialogue("Head Shepherd", "My lord Job, the flocks are safe. But tell me, how do we find peace when the world around us is so uncertain?", [
@@ -1629,7 +1659,7 @@ function postCalamitySetup() {
         const g = new THREE.Group(); 
         if(modelCache[f.m]) {
             const mod = SkeletonUtils.clone(modelCache[f.m].scene);
-            mod.scale.set(10,10,10);
+            mod.scale.set(2.8,2.8,2.8);
             g.add(mod);
         } else {
             const b = new THREE.Mesh(new THREE.BoxGeometry(18, 50, 18), pbrMat(f.c)); b.position.y=25; 
