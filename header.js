@@ -16,7 +16,6 @@ class ElusiveHeader extends HTMLElement {
                     transition: all 0.4s ease;
                 }
 
-                /* SCROLLED STATE (Solid Black) */
                 header.scrolled {
                     background: #000000;
                     padding: 15px 40px;
@@ -24,7 +23,6 @@ class ElusiveHeader extends HTMLElement {
                     box-shadow: 0 10px 30px rgba(0,0,0,0.8);
                 }
 
-                /* "GHOST PROTOCOL" ANIMATION */
                 .logo { 
                     font-weight: 900; 
                     letter-spacing: 3px; 
@@ -32,47 +30,64 @@ class ElusiveHeader extends HTMLElement {
                     text-decoration: none; 
                     font-size: 1.2rem; 
                     text-transform: uppercase; 
-                    /* 4s cycle: Fades out, waits, fades in */
                     animation: ghost-fade 4s infinite ease-in-out;
                 }
                 .logo span { color: #ef4444; }
 
                 @keyframes ghost-fade {
-                    0% { 
-                        opacity: 1; 
-                        text-shadow: 0 0 20px rgba(239, 68, 68, 0.8); 
-                        filter: blur(0px);
-                    }
-                    45% { 
-                        opacity: 0.1; /* Almost invisible */
-                        text-shadow: none; 
-                        filter: blur(2px); /* Slight blur as it vanishes */
-                    }
-                    55% {
-                        opacity: 0.1; /* Stay invisible for a moment */
-                    }
-                    100% { 
-                        opacity: 1; 
-                        text-shadow: 0 0 20px rgba(239, 68, 68, 0.8); 
-                        filter: blur(0px);
-                    }
+                    0% { opacity: 1; text-shadow: 0 0 20px rgba(239, 68, 68, 0.8); filter: blur(0px); }
+                    45% { opacity: 0.1; text-shadow: none; filter: blur(2px); }
+                    55% { opacity: 0.1; }
+                    100% { opacity: 1; text-shadow: 0 0 20px rgba(239, 68, 68, 0.8); filter: blur(0px); }
                 }
 
                 nav { display: flex; gap: 30px; align-items: center; }
-                nav a { color: #ccc; text-decoration: none; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; transition: 0.3s; font-weight: 600; }
-                nav a:hover { color: white; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
-                
-                /* SPECIAL LINKS */
-                .gear-link { color: #ef4444 !important; }
-                .deploy-btn { 
-                    border: 1px solid #ef4444; padding: 8px 20px; color: #ef4444 !important; 
-                    border-radius: 4px; transition: 0.3s; background: rgba(239, 68, 68, 0.1);
+                nav a { 
+                    color: #ccc; 
+                    text-decoration: none; 
+                    font-size: 0.85rem; 
+                    letter-spacing: 2px; 
+                    text-transform: uppercase; 
+                    transition: 0.3s; 
+                    font-weight: 600; 
                 }
-                .deploy-btn:hover { background: #ef4444; color: black !important; box-shadow: 0 0 15px #ef4444; }
-                
-                /* GAME LINK */
+                nav a:hover { color: white; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+
+                /* SPECIAL LINKS */
                 .game-link { color: #d4af37 !important; font-weight: 900 !important; }
                 .game-link:hover { color: #ffe55c !important; text-shadow: 0 0 15px rgba(212,175,55,0.8) !important; }
+
+                /* NEW BOOK LINK */
+                .book-link {
+                    color: #fff !important;
+                    font-weight: 800 !important;
+                    position: relative;
+                }
+                .book-link:hover {
+                    color: #ef4444 !important;
+                    text-shadow: 0 0 15px rgba(239, 68, 68, 0.8);
+                }
+                .book-link::after {
+                    content: '';
+                    position: absolute;
+                    bottom: -4px;
+                    left: 0;
+                    width: 0;
+                    height: 2px;
+                    background: #ef4444;
+                    transition: width 0.3s;
+                }
+                .book-link:hover::after { width: 100%; }
+
+                .deploy-btn { 
+                    border: 1px solid #ef4444; 
+                    padding: 8px 20px; 
+                    color: #ef4444 !important; 
+                    border-radius: 4px; 
+                    transition: 0.3s; 
+                    background: rgba(239, 68, 68, 0.1);
+                }
+                .deploy-btn:hover { background: #ef4444; color: black !important; box-shadow: 0 0 15px #ef4444; }
 
                 @media (max-width: 768px) { nav { display: none; } }
             </style>
@@ -81,6 +96,12 @@ class ElusiveHeader extends HTMLElement {
                 <a href="#" class="logo">ELUSIVE<span>STUDIO</span></a>
                 <nav>
                     <a href="/uz-game/genie.html" target="_blank" class="game-link">THE PATIENCE OF UZ</a>
+                    
+                    <!-- NEW BOOK LINK -->
+                    <a href="https://limopimp.gumroad.com/l/rootaccess" target="_blank" class="book-link">
+                        ROOT ACCESS
+                    </a>
+                    
                     <a href="#services">Protocols</a>
                     <a href="#tools">Arsenal</a>
                     <a href="https://www.insta360.com/sal/x5?utm_source=AffiliateCenter&utm_medium=copylink&utm_term=INRVI5H" target="_blank" class="gear-link">GEAR</a>
