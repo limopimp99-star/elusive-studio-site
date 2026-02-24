@@ -9,15 +9,13 @@ class ElusiveHero extends HTMLElement {
                     min-height: 100vh; display: flex; flex-direction: column; 
                     align-items: center; justify-content: center; text-align: center;
                     position: relative; overflow: hidden; padding: 0 1.5rem;
-                    background: #000; /* Ensure black background behind image */
+                    background: #000;
                 }
 
-                /* THE CAR IMAGE RESTORED */
                 .hero-bg-img {
                     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
                     object-fit: cover; z-index: 0;
-                    opacity: 0.6; /* Made slightly brighter so it pops */
-                    filter: brightness(0.7) contrast(1.2);
+                    opacity: 0.65; filter: brightness(0.7) contrast(1.2);
                 }
                 
                 .plus {
@@ -28,17 +26,15 @@ class ElusiveHero extends HTMLElement {
 
                 .hero-content { position: relative; z-index: 2; max-width: 900px; }
 
-                /* FIRE/RAINBOW TEXT RESTORED */
                 h1 { 
                     font-size: clamp(3rem, 9vw, 6.5rem); font-weight: 900; line-height: 1; 
                     margin-bottom: 1.5rem; text-transform: uppercase; margin-top: 0;
                 }
                 .rainbow {
-                    /* Fire/Heat Gradient */
                     background: linear-gradient(90deg, #ef4444, #ff7f00, #ffff00, #ef4444);
                     background-size: 300%; -webkit-background-clip: text; background-clip: text; color: transparent;
                     animation: rainbow-move 4s linear infinite;
-                    filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.6)); /* Stronger Glow */
+                    filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.6));
                 }
                 @keyframes rainbow-move { from { background-position: 0% 50%; } to { background-position: 300% 50%; } }
                 
@@ -47,7 +43,6 @@ class ElusiveHero extends HTMLElement {
                     font-weight: 600; line-height: 1.6; text-shadow: 2px 2px 10px black;
                 }
                 
-                /* MAIN BUTTON STYLING */
                 .btn-group {
                     display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;
                 }
@@ -81,18 +76,12 @@ class ElusiveHero extends HTMLElement {
                 <div class="plus" style="bottom: 20%; right: 10%; font-size: 5rem;">+</div>
 
                 <div class="hero-content">
-                    <h1 class="rainbow">Ignite your <br> social life</h1>
-                    <p>We install the systems, legal structures, and strategies that allow high-level founders to scale without burnout.</p>
+                    <h1 class="rainbow">ROOT ACCESS</h1>
+                    <p>Hacking the Streets, the Mind, and the Matrix</p>
                     
                     <div class="btn-group">
-                        <button class="btn" 
-                            data-tally-open="Y5aXxB" 
-                            data-tally-layout="modal" 
-                            data-tally-emoji-text="👋" 
-                            data-tally-emoji-animation="wave">
-                            JOIN THE WAR ROOM
-                        </button>
-                        <a href="/uz-game/genie.html" target="_blank" class="btn btn-gold">PLAY GAME</a>
+                        <a href="https://limopimp.gumroad.com/l/rootaccess" target="_blank" class="btn">CLEAN EDITION – $19</a>
+                        <a href="https://limopimp.gumroad.com/l/rootaccess-raw" target="_blank" class="btn btn-gold">RAW & UNFILTERED – $39</a>
                     </div>
                 </div>
             </section>

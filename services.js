@@ -115,6 +115,24 @@ class ElusiveServices extends HTMLElement {
 
                     <h2>OUR <span>PROTOCOLS</span></h2>
                     <div class="grid">
+                        <!-- NEW BOOK CARD -->
+                        <div class="card">
+                            <div class="category">BOOK</div>
+                            <i class="fas fa-book icon"></i>
+                            <h3>ROOT ACCESS</h3>
+                            <p>The raw, uncut story of street-to-matrix empire building. Available in Clean & Raw versions.</p>
+                            <a href="https://limopimp.gumroad.com/l/rootaccess" target="_blank" style="margin-top:20px; color:#ef4444; font-weight: bold;">BUY NOW</a>
+                        </div>
+
+                        <!-- NEW WEBSITE MAKING CARD -->
+                        <div class="card">
+                            <div class="category">WEBSITES</div>
+                            <i class="fas fa-globe icon"></i>
+                            <h3>WEBSITE MAKING</h3>
+                            <p>Custom cyberpunk-style landing pages, PWAs, and high-conversion sites built for creators & hustlers.</p>
+                        </div>
+
+                        <!-- ORIGINAL CARDS -->
                         <div class="card" onclick="window.requestServiceDetail('LLC')">
                             <div class="category">INFRASTRUCTURE</div><i class="fas fa-shield-alt icon"></i>
                             <h3>LLC FORMATION</h3><p>Red tape elimination. We handle filings and business structure for Day 1 protection.</p>
@@ -144,7 +162,7 @@ class ElusiveServices extends HTMLElement {
             </section>
         `;
 
-        // --- YOUTUBE OVERLAY & RESOURCE PAUSE PROTOCOL ---
+        // --- YOUTUBE OVERLAY & RESOURCE PAUSE PROTOCOL --- 
         const overlay = this.shadowRoot.getElementById('yt-overlay');
         const iframe = this.shadowRoot.getElementById('yt-iframe');
 
