@@ -98,7 +98,7 @@ class ElusiveHeader extends HTMLElement {
                     <a href="/uz-game/genie.html" target="_blank" class="game-link">THE PATIENCE OF UZ</a>
                     
                     <!-- NEW BOOK LINK -->
-                    <a href="https://limopimp.gumroad.com/l/rootaccess" target="_blank" class="book-link">
+                    <a href="https://don305choppa.gumroad.com/l/fuorrj?_gl=1*1g7i4kb*_ga*MTgxMzk4NDgyOC4xNzcxODc2NTYw*_ga_6LJN6D94N6*czE3NzE5MDUzNjckbzMkZzEkdDE3NzE5MDUzNjkkajU4JGwwJGgw" target="_blank" class="book-link">
                         ROOT ACCESS
                     </a>
                     
