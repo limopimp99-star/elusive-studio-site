@@ -83,6 +83,7 @@ class ElusiveServices extends HTMLElement {
                     background: rgba(20, 20, 20, 0.8); border: 1px solid #333; padding: 2.5rem;
                     border-radius: 12px; transition: 0.4s; cursor: crosshair; backdrop-filter: blur(10px);
                     display: flex; flex-direction: column; align-items: center; text-align: center;
+                    text-decoration: none;
                 }
                 .card:hover { border-color: #ef4444; transform: translateY(-10px); box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.05); }
                 .icon { font-size: 2.5rem; color: #ef4444; margin-bottom: 1.5rem; }
@@ -115,16 +116,14 @@ class ElusiveServices extends HTMLElement {
 
                     <h2>OUR <span>PROTOCOLS</span></h2>
                     <div class="grid">
-                        <!-- NEW BOOK CARD -->
                         <div class="card">
                             <div class="category">BOOK</div>
                             <i class="fas fa-book icon"></i>
                             <h3>ROOT ACCESS</h3>
                             <p>The raw, uncut story of street-to-matrix empire building. Available in Clean & Raw versions.</p>
-                            <a href="https://limopimp.gumroad.com/l/rootaccess" target="_blank" style="margin-top:20px; color:#ef4444; font-weight: bold;">BUY NOW</a>
+                            <a href="https://don305choppa.gumroad.com/l/fuorrj?_gl=1*20aghs*_ga*MTgxMzk4NDgyOC4xNzcxODc2NTYw*_ga_6LJN6D94N6*czE3NzIyMDc4NDAkbzExJGcwJHQxNzcyMjA3ODQwJGo2MCRsMCRoMA.." target="_blank" style="margin-top:20px; color:#ef4444; font-weight: bold; text-decoration: none;">BUY NOW</a>
                         </div>
 
-                        <!-- NEW WEBSITE MAKING CARD -->
                         <div class="card">
                             <div class="category">WEBSITES</div>
                             <i class="fas fa-globe icon"></i>
@@ -132,7 +131,6 @@ class ElusiveServices extends HTMLElement {
                             <p>Custom cyberpunk-style landing pages, PWAs, and high-conversion sites built for creators & hustlers.</p>
                         </div>
 
-                        <!-- ORIGINAL CARDS -->
                         <div class="card" onclick="window.requestServiceDetail('LLC')">
                             <div class="category">INFRASTRUCTURE</div><i class="fas fa-shield-alt icon"></i>
                             <h3>LLC FORMATION</h3><p>Red tape elimination. We handle filings and business structure for Day 1 protection.</p>
@@ -172,26 +170,3 @@ class ElusiveServices extends HTMLElement {
 
                 // 1. Hide the Command Center UI
                 overlay.style.display = 'none';
-
-                // 2. Inject YouTube Video with Autoplay & Origin Bypass
-                const youtubeID = "ma23GmXhmGA"; 
-                iframe.src = "https://www.youtube.com/embed/" + youtubeID + "?autoplay=1&rel=0&modestbranding=1&origin=" + window.location.origin;
-
-                // 3. Silence Agent Adam if he is talking
-                if (typeof introAudio !== 'undefined' && introAudio) {
-                    introAudio.pause();
-                }
-                const domAudio = document.getElementById('audio-intro');
-                if (domAudio) {
-                    domAudio.pause();
-                }
-
-                // 4. Kill lag by disabling heavy background CSS
-                document.body.classList.add('vsl-active');
-                const liquidBg = document.getElementById('liquid-bg');
-                if (liquidBg) liquidBg.style.display = 'none';
-            });
-        }
-    }
-}
-customElements.define('elusive-services', ElusiveServices);
