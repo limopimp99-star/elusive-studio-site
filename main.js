@@ -138,7 +138,6 @@ window.handleEnter = function(event) {
 
 // --- POPUP LOGIC ---
 window.requestServiceDetail = function(serviceKey) {
-    // ... (your original modal code - kept full)
     const data = SERVICE_BRIEFS[serviceKey];
     if (!data) return;
 
@@ -239,6 +238,14 @@ window.triggerAgentAction = async function(module, action, btnElement) {
     }, 1500);
 };
 
+// --- FIX APPLIED HERE ---
 window.sendWarMessage = async function() {
     const input = document.getElementById('war-input');
-    if (!input || !input
+    if (!input || !input.value.trim()) return;
+    
+    const text = input.value.trim();
+    appendMessage("YOU", text, 'war-room-chat');
+    input.value = "";
+    
+    sendToWebhook(text, appendMessage, 'war-room-chat');
+};
