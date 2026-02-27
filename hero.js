@@ -80,8 +80,9 @@ class ElusiveHero extends HTMLElement {
                     <p>Hacking the Streets, the Mind, and the Matrix</p>
                     
                     <div class="btn-group">
-                        <a href="https://limopimp.gumroad.com/l/rootaccess" target="_blank" class="btn">CLEAN EDITION – $19</a>
-                        <a href="https://limopimp.gumroad.com/l/rootaccess-raw" target="_blank" class="btn btn-gold">RAW & UNFILTERED – $39</a>
+                        <h1 class="rainbow">PREORDER SPECIAL</h1>
+                        <a href="https://don305choppa.gumroad.com/l/fuorrj?_gl=1*20aghs*_ga*MTgxMzk4NDgyOC4xNzcxODc2NTYw*_ga_6LJN6D94N6*czE3NzIyMDc4NDAkbzExJGcwJHQxNzcyMjA3ODQwJGo2MCRsMCRoMA.." target="_blank" class="btn">CLEAN EDITION – $19</a>
+                        <a href="https://gumroad.com/discover?a=933339027" target="_blank" class="btn btn-gold">RAW & UNFILTERED – $39</a>
                     </div>
                 </div>
             </section>
